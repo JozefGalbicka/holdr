@@ -60,12 +60,12 @@ struct HoldrConfig *holdrconfig_load(const char *filename)
         return NULL;
     }
 
-    toml_table_t *conf = toml_parse_file(f, errbuf, sizeof(errbuf));
+    toml_table_t *toml_conf = toml_parse_file(f, errbuf, sizeof(errbuf));
     fclose(f);
 
-    if (!conf) {
+    if (!toml_conf) {
         fprintf(stderr, "Cannot parse config - %s\n", errbuf);
-        toml_free(conf);
+        toml_free(toml_conf);
         return NULL;
     }
     //
@@ -76,14 +76,10 @@ struct HoldrConfig *holdrconfig_load(const char *filename)
     //
 
     // parse table "server"
-    toml_table_t *server = toml_table_in(conf, "server");
+    toml_table_t *server = toml_table_in(toml_conf, "server");
     if (!server) {
         fprintf(stderr, "missing [server] table\n");
-        toml_free(conf);
-        holdrconfig_destroy(holdr_conf);
-        free(holdr_conf);
-        holdr_conf = NULL;
-        return NULL;
+        goto error_cleanup;
     }
     //
 
@@ -92,10 +88,7 @@ struct HoldrConfig *holdrconfig_load(const char *filename)
     if (!address.ok) {
         fprintf(stderr, "cannot read server.address\n");
         free(address.u.s);
-        toml_free(conf);
-        holdrconfig_destroy(holdr_conf);
-        free(holdr_conf);
-        return NULL;
+        goto error_cleanup;
     }
     holdr_conf->address = strdup(address.u.s);
     free(address.u.s);
@@ -103,21 +96,15 @@ struct HoldrConfig *holdrconfig_load(const char *filename)
     toml_datum_t port = toml_int_in(server, "port");
     if (!port.ok) {
         fprintf(stderr, "cannot read server.port\n");
-        toml_free(conf);
-        holdrconfig_destroy(holdr_conf);
-        free(holdr_conf);
-        return NULL;
+        goto error_cleanup;
     }
     holdr_conf->port = port.u.i;
     //
 
-    toml_array_t *zones_array = toml_array_in(conf, "zones");
+    toml_array_t *zones_array = toml_array_in(toml_conf, "zones");
     if (!zones_array) {
         fprintf(stderr, "cannot read zones array\n");
-        toml_free(conf);
-        holdrconfig_destroy(holdr_conf);
-        free(holdr_conf);
-        return NULL;
+        goto error_cleanup;
     }
 
     int zones_count = toml_array_nelem(zones_array);
@@ -132,20 +119,14 @@ struct HoldrConfig *holdrconfig_load(const char *filename)
         if (!domain.ok) {
             fprintf(stderr, "cannot read zone.domain\n");
             free(domain.u.s);
-            toml_free(conf);
-            holdrconfig_destroy(holdr_conf);
-            free(holdr_conf);
-            return NULL;
+            goto error_cleanup;
         }
         toml_datum_t file = toml_string_in(zone, "file");
         if (!file.ok) {
             fprintf(stderr, "cannot read zone.file\n");
             free(domain.u.s);
             free(file.u.s);
-            toml_free(conf);
-            holdrconfig_destroy(holdr_conf);
-            free(holdr_conf);
-            return NULL;
+            goto error_cleanup;
         }
         holdrzone_init(&holdr_zone, domain.u.s, file.u.s);
         arraylist_add(&holdr_conf->zones, &holdr_zone);
@@ -153,14 +134,18 @@ struct HoldrConfig *holdrconfig_load(const char *filename)
         // printf("File: %s\n", file.u.s);
         free(domain.u.s);
         free(file.u.s);
-        // holdr_conf->domain = strdup(domain.u.s);
     }
     printf("\n");
 
-    // free
-    toml_free(conf);
-    //
+    toml_free(toml_conf);
+    goto out;
 
+error_cleanup:
+    toml_free(toml_conf);
+    holdrconfig_destroy(holdr_conf);
+    free(holdr_conf);
+    holdr_conf = NULL;
+out:
     return holdr_conf;
 }
 
