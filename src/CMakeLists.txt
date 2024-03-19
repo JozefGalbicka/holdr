@@ -7,6 +7,10 @@ add_library (holdr_lib
     utils/prints.h
     utils/prints.c
     utils/macros.h
+    loaders/config.h
+    loaders/config.c
+    ../external/tomlc/toml.h
+    ../external/tomlc/toml.c
 )
 
 add_executable(holdr

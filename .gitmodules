@@ -1,0 +1,3 @@
+[submodule "external/tomlc"]
+	path = external/tomlc
+	url = https://github.com/cktan/tomlc99.git
