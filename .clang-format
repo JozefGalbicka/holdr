@@ -1,0 +1,12 @@
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+# To view LLVM code style config, use `clang-format -style=llvm -dump-config`
+---
+BasedOnStyle: LLVM
+IndentWidth: 4
+---
+Language: Cpp
+Standard: c++11
+AllowShortFunctionsOnASingleLine: false
+ColumnLimit: 120
+BreakBeforeBraces: Linux
+...
