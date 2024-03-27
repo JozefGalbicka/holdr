@@ -9,6 +9,10 @@ add_library (holdr_lib
     utils/macros.h
     loaders/config.h
     loaders/config.c
+    core/dns_packet.h
+    core/dns_packet.c
+    core/server.h
+    core/server.c
     ../external/tomlc/toml.h
     ../external/tomlc/toml.c
 )
