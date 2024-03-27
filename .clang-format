@@ -9,4 +9,5 @@ Standard: c++11
 AllowShortFunctionsOnASingleLine: false
 ColumnLimit: 120
 BreakBeforeBraces: Linux
+AllowShortEnumsOnASingleLine: false
 ...
