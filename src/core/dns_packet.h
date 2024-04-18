@@ -36,10 +36,10 @@ enum {
     ResponseCode_NXDOMAIN = 3,
     ResponseCode_NOTIMP = 4,
     ResponseCode_REFUSED = 5,
-    //ResponseCode_YXDOMAIN = 6,
-    //ResponseCode_XRRSET = 7,
-    //ResponseCode_NOTAUTH = 8,
-    //ResponseCode_NOTZONE = 9 
+    // ResponseCode_YXDOMAIN = 6,
+    // ResponseCode_XRRSET = 7,
+    // ResponseCode_NOTAUTH = 8,
+    // ResponseCode_NOTZONE = 9
 };
 
 /* Question Section */

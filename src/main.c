@@ -1,8 +1,8 @@
 
+#include "core/server.h"
+#include "loaders/config.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "loaders/config.h"
-#include "core/server.h"
 
 int main(int argc, char *argv[])
 {

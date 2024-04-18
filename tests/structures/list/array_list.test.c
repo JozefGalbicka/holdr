@@ -8,14 +8,16 @@
 // ---------------
 // Helper funcs
 // ---------------
-static ArrayList *test_array_list_create() {
+static ArrayList *test_array_list_create()
+{
     ArrayList *list;
     list = malloc(sizeof(ArrayList));
     arraylist_init(list, sizeof(int));
     return list;
 }
 
-static void test_array_list_fill(ArrayList *list, size_t count) {
+static void test_array_list_fill(ArrayList *list, size_t count)
+{
     int tmp;
     for (int i = 0; i < count; i++) {
         // tmp = rand() % 100;
@@ -23,7 +25,8 @@ static void test_array_list_fill(ArrayList *list, size_t count) {
     }
 }
 
-static _Bool test_array_list_delete(ArrayList *list) {
+static _Bool test_array_list_delete(ArrayList *list)
+{
     arraylist_destroy(list);
     free(list);
     list = NULL;
@@ -33,7 +36,8 @@ static _Bool test_array_list_delete(ArrayList *list) {
 // ---------------
 // Actual tests
 // ---------------
-void test_array_list_binary_save_and_load() {
+void test_array_list_binary_save_and_load()
+{
     printf("### test_array_list_binary_save_and_load()\n\n");
     // Writing to binary file
     ArrayList *list = test_array_list_create();
@@ -62,7 +66,8 @@ void test_array_list_binary_save_and_load() {
     printf("\n\n");
 }
 
-void test_array_list_iterator() {
+void test_array_list_iterator()
+{
     printf("### test_array_list_iterator()\n\n");
 
     // Create array_list
@@ -92,7 +97,8 @@ void test_array_list_iterator() {
     printf("\n\n");
 }
 
-void test_array_list_set() {
+void test_array_list_set()
+{
     printf("### test_array_list_set()\n\n");
 
     ArrayList *list = test_array_list_create();
@@ -130,7 +136,8 @@ void test_array_list_set() {
     printf("\n\n");
 }
 
-void test_array_list_assign() {
+void test_array_list_assign()
+{
     printf("test_array_list_assign()\n\n");
     // Original list
     ArrayList *list = test_array_list_create();
@@ -160,7 +167,8 @@ void test_array_list_assign() {
     printf("\n\n");
 }
 
-int main(void) {
+int main(void)
+{
     printf("\n");
     test_array_list_binary_save_and_load();
     test_array_list_iterator();

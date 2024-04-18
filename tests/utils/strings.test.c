@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-int test_trim() {
+int test_trim()
+{
     printf("#########################\n");
     printf("### test_trim()\n");
     printf("#########################\n");
@@ -25,7 +26,8 @@ int test_trim() {
     return 0;
 }
 
-int main(void) {
+int main(void)
+{
     test_trim();
     return 0;
 }
