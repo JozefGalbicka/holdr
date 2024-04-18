@@ -21,6 +21,49 @@ static const uint16_t RA_MASK     = 0x0080;  // 0000 0000 1000 0000
 static const uint16_t RCODE_MASK  = 0x000F;  // 0000 0000 0000 1111
 
 
+void print_resource_record(struct ResourceRecord *rr)
+{
+  int i;
+  while (rr) {
+    printf("  ResourceRecord { name '%s', type %u, class %u, ttl %u, rd_length %u, ",
+      rr->name,
+      rr->type,
+      rr->class,
+      rr->ttl,
+      rr->rd_length
+   );
+
+    union ResourceData *rd = &rr->rd_data;
+    switch (rr->type) {
+      case RRType_A:
+        printf("Address Resource Record { address ");
+
+        for (i = 0; i < 4; i += 1)
+          printf("%s%u", (i ? "." : ""), rd->a_record.addr[i]);
+
+        printf(" }");
+        break;
+      case RRType_AAAA:
+        printf("AAAA Resource Record { address ");
+
+        for (i = 0; i < 16; i += 1)
+          printf("%s%02x", (i ? ":" : ""), rd->aaaa_record.addr[i]);
+
+        printf(" }");
+        break;
+      case RRType_TXT:
+        printf("Text Resource Record { txt_data '%s' }",
+          rd->txt_record.txt_data
+        );
+        break;
+      default:
+        printf("Unknown Resource Record { ??? }");
+    }
+    printf("}\n");
+    rr = rr->next;
+  }
+}
+
 void print_message(struct Message *msg)
 {
   struct Question *q;
@@ -54,6 +97,10 @@ void print_message(struct Message *msg)
     );
     q = q->next;
   }
+
+  print_resource_record(msg->answers);
+  print_resource_record(msg->authorities);
+  print_resource_record(msg->additionals);
 
   printf("}\n");
 }
