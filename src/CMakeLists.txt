@@ -6,6 +6,8 @@ add_library (holdr_lib
     utils/strings.c
     utils/prints.h
     utils/prints.c
+    utils/file_reader.h
+    utils/file_reader.c
     utils/macros.h
     loaders/config.h
     loaders/config.c
