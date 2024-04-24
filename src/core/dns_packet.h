@@ -107,10 +107,10 @@ struct Message {
     uint16_t ra;     /* Recursion Available */
     uint16_t rcode;  /* Response Code */
 
-    uint16_t qdCount; /* Question Count */
-    uint16_t anCount; /* Answer Record Count */
-    uint16_t nsCount; /* Authority Record Count */
-    uint16_t arCount; /* Additional Record Count */
+    uint16_t qd_count; /* Question Count */
+    uint16_t an_count; /* Answer Record Count */
+    uint16_t ns_count; /* Authority Record Count */
+    uint16_t ar_count; /* Additional Record Count */
 
     /* At least one question; questions are copied to the response 1:1 */
     struct Question *questions;
@@ -125,12 +125,12 @@ struct Message {
     struct ResourceRecord *additionals;
 };
 
-void print_resource_record(struct ResourceRecord *rr);
-void print_message(struct Message *msg);
+void resource_record_print(struct ResourceRecord *rr);
+void message_print(struct Message *msg);
 uint16_t get16bits(const uint8_t **buffer);
 
-void decode_header(struct Message *msg, const uint8_t **buffer);
+static void message_decode_header(struct Message *msg, const uint8_t **buffer);
 char *decode_domain_name(const uint8_t **buf, size_t len);
-bool decode_msg(struct Message *msg, const uint8_t *buffer, size_t size);
+bool message_decode(struct Message *msg, const uint8_t *buffer, size_t size);
 
 #endif
