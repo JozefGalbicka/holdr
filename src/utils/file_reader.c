@@ -9,7 +9,7 @@ size_t read_file_size(FILE * f) {
   return size;
 }
 
-// function initializes the out param
+// function returns initialized buffer, don't forget to free
 char * read_plaintext_file(const char *filename, size_t *out_size) {
   FILE * f = fopen(filename, "r");
   if (f == NULL) {
