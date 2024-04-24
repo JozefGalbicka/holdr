@@ -19,7 +19,7 @@ static const uint16_t RD_MASK = 0x0100;     // 0000 0001 0000 0000
 static const uint16_t RA_MASK = 0x0080;     // 0000 0000 1000 0000
 static const uint16_t RCODE_MASK = 0x000F;  // 0000 0000 0000 1111
 
-void print_resource_record(struct ResourceRecord *rr)
+void resource_record_print(struct ResourceRecord *rr)
 {
     int i;
     while (rr) {
@@ -55,7 +55,7 @@ void print_resource_record(struct ResourceRecord *rr)
     }
 }
 
-void print_message(struct Message *msg)
+void message_print(struct Message *msg)
 {
     struct Question *q;
 
@@ -72,10 +72,10 @@ void print_message(struct Message *msg)
     printf("rcode(%d)", msg->rcode);
     printf(" ]");
 
-    printf(", QDcount: %u", msg->qdCount);
-    printf(", ANcount: %u", msg->anCount);
-    printf(", NScount: %u", msg->nsCount);
-    printf(", ARcount: %u,\n", msg->arCount);
+    printf(", QDcount: %u", msg->qd_count);
+    printf(", ANcount: %u", msg->an_count);
+    printf(", NScount: %u", msg->ns_count);
+    printf(", ARcount: %u,\n", msg->ar_count);
 
     q = msg->questions;
     while (q) {
@@ -83,9 +83,9 @@ void print_message(struct Message *msg)
         q = q->next;
     }
 
-    print_resource_record(msg->answers);
-    print_resource_record(msg->authorities);
-    print_resource_record(msg->additionals);
+    resource_record_print(msg->answers);
+    resource_record_print(msg->authorities);
+    resource_record_print(msg->additionals);
 
     printf("}\n");
 }
@@ -100,7 +100,7 @@ uint16_t get16bits(const uint8_t **buffer)
     return ntohs(value);
 }
 
-void decode_header(struct Message *msg, const uint8_t **buffer)
+static void message_decode_header(struct Message *msg, const uint8_t **buffer)
 {
     msg->id = get16bits(buffer);
     uint16_t fields = get16bits(buffer); // we have to convert to host because of '&' operation
@@ -114,10 +114,10 @@ void decode_header(struct Message *msg, const uint8_t **buffer)
     msg->ra = (fields & RA_MASK) >> 7;
     msg->rcode = (fields & RCODE_MASK) >> 0;
 
-    msg->qdCount = get16bits(buffer);
-    msg->anCount = get16bits(buffer);
-    msg->nsCount = get16bits(buffer);
-    msg->arCount = get16bits(buffer);
+    msg->qd_count = get16bits(buffer);
+    msg->an_count = get16bits(buffer);
+    msg->ns_count = get16bits(buffer);
+    msg->ar_count = get16bits(buffer);
 }
 
 char *decode_domain_name(const uint8_t **buf, size_t len)
@@ -139,19 +139,19 @@ char *decode_domain_name(const uint8_t **buf, size_t len)
     return NULL;
 }
 
-bool decode_msg(struct Message *msg, const uint8_t *buffer, size_t size)
+bool message_decode(struct Message *msg, const uint8_t *buffer, size_t size)
 {
     int i;
 
-    decode_header(msg, &buffer);
+    message_decode_header(msg, &buffer);
 
-    if (msg->anCount != 0 || msg->nsCount != 0) {
+    if (msg->an_count != 0 || msg->ns_count != 0) {
         printf("Only questions expected!\n");
         return false;
     }
 
     // read questions
-    for (i = 0; i < msg->qdCount; i += 1) {
+    for (i = 0; i < msg->qd_count; i += 1) {
         struct Question *q = malloc(sizeof(struct Question));
 
         q->qName = decode_domain_name(&buffer, size);

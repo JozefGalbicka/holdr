@@ -96,11 +96,11 @@ int run_server(const char *address, int port)
                           INET6_ADDRSTRLEN));
 
         /* Try to decode query */
-        if (!decode_msg(&msg, buffer, nbytes)) {
+        if (!message_decode(&msg, buffer, nbytes)) {
             continue;
         }
 
         /* Print query */
-        print_message(&msg);
+        message_print(&msg);
     }
 }
