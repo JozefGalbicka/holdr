@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 size_t read_file_size(FILE * f) {
     fseek(f, 0, SEEK_END);

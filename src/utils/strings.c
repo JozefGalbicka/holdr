@@ -2,6 +2,7 @@
 #include "strings.h"
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 char *right_trim(char *str)
@@ -50,4 +51,32 @@ char *get_basename(const char *path)
         return strdup(path);
     else
         return strdup(basename + 1);
+}
+
+char ** split_str(const char * str, char * delimeter, int * split_count_out) {
+    size_t str_len = strlen(str) + 1;  // include \0 terminator
+
+    char str_copy[str_len];
+    strncpy(str_copy, str, str_len);
+
+    char * tok = strtok(str_copy, delimeter);
+    int split_count = 0;
+
+    while (tok != NULL) {
+        split_count++;
+        tok = strtok(NULL, delimeter);
+    }
+
+    strncpy(str_copy, str, str_len);
+    tok = strtok(str_copy, delimeter);
+    char ** buffer = calloc(split_count, sizeof(char *));
+
+    for (int i = 0; i < split_count; i++) {
+        buffer[i] = calloc(1, sizeof(char) * strlen(tok));
+        strcpy(buffer[i], tok);
+        tok = strtok(NULL, delimeter);
+    }
+
+    *split_count_out = split_count;
+    return buffer;
 }

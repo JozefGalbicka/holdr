@@ -22,8 +22,7 @@ int test_read_file_size() {
     return 0;
 }
 
-int test_read_plaintext_file()
-{
+int test_read_plaintext_file() {
     printf("#########################\n");
     printf("### test_read_file_size()\n");
     printf("#########################\n");
