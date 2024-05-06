@@ -11,6 +11,8 @@ add_library (holdr_lib
     utils/macros.h
     loaders/config.h
     loaders/config.c
+    loaders/parser.h
+    loaders/parser.c
     core/dns_packet.h
     core/dns_packet.c
     core/server.h
