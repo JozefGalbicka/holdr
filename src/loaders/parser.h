@@ -5,6 +5,7 @@
 #include "core/dns_packet.h"
 
 int class_check(char *class_val);
+int type_check(char * type_val);
 int class_choose(char *class_val);
 int mx_check(char **values, int values_count);
 
