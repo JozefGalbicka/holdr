@@ -72,7 +72,7 @@ char ** split_str(const char * str, char * delimeter, int * split_count_out) {
     char ** buffer = calloc(split_count, sizeof(char *));
 
     for (int i = 0; i < split_count; i++) {
-        buffer[i] = calloc(1, sizeof(char) * strlen(tok));
+        buffer[i] = calloc(strlen(tok) + 1, sizeof(char));
         strcpy(buffer[i], tok);
         tok = strtok(NULL, delimeter);
     }
