@@ -256,6 +256,7 @@ int test_zone_file_parse() {
     struct ResourceRecord * rr;
     if ((rr = zone_file_parse(file_path)) == NULL) {
         printf("Zone file parse test failed, aborting\n");
+        exit(1);
     }
 
     printf("Zone file parse test result:\n");
