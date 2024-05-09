@@ -19,6 +19,14 @@ enum {
     RRType_SRV = 33
 };
 
+/* Resource Record Classes */
+enum {
+    RRClass_IN = 1,
+    RRClass_CS = 2,
+    RRClass_CH = 3,
+    RRClass_HS = 4
+};
+
 /* Operation Code */
 enum {
     OperationCode_QUERY = 0,  /* standard query */
