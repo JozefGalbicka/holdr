@@ -139,6 +139,45 @@ char *decode_domain_name(const uint8_t **buf, size_t len)
     return NULL;
 }
 
+
+// sub.example.com  => 3sub7example3com0
+// sub.example.com. => 3sub7example3com0
+// (trailing dot in provided `domain` is optional, works either way)
+void encode_domain_name(uint8_t **buffer, const char *domain, bool move_buffer)
+{
+    uint8_t *buf = *buffer;
+    const char *beg = domain; // always points to start of every label
+    const char *pos;          // used to find position of delimiters '.'
+    int len = 0;              // length of every label
+    int i = 0;                // size in bytes written into `buf`
+
+    while ((pos = strchr(beg, '.'))) {
+        len = pos - beg;
+        buf[i] = len;
+        i += 1;
+        memcpy(buf + i, beg, len);
+        i += len;
+
+        beg = pos + 1; // first character after `.` (dot)
+    }
+
+    len = strlen(domain) - (beg - domain); // length - (processed length)
+
+    buf[i] = len; // last label length
+    i += 1;
+    if (len != 0) { // if the supllied domain doesn't end with dot ('.'), then add final label and force-append '0'
+        memcpy(buf + i, beg, len);
+        i += len;
+
+        buf[i] = 0;
+        i += 1;
+    }
+
+    if (move_buffer) {
+        *buffer += i;
+    }
+}
+
 bool message_decode(struct Message *msg, const uint8_t *buffer, size_t size)
 {
     int i;
