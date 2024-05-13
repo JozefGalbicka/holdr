@@ -52,7 +52,7 @@ enum {
 
 /* Question Section */
 struct Question {
-    char *qName;
+    char *qName; // plaintext domain (with dots)
     uint16_t qType;
     uint16_t qClass;
     struct Question *next; // for next question (if present)
@@ -80,21 +80,41 @@ union ResourceData {
     // SOA
     // HINFO
     // SRV
-    struct { //
+    
+    struct {
+        uint8_t addr[4];
+    } a_record;
+    struct {
+        uint8_t addr[16];
+    } aaaa_record;
+    struct {
+        char *cname; // labeled
+    } cname_record;
+    struct {
+        uint16_t preference;
+        char *exchange; // labeled
+    } mx_record;
+    struct {
+        char *nsdname; // labeled
+    } ns_record;
+    struct {
+        char *mname; // labeled
+        char *rname; // labeled
+        uint32_t serial;
+        uint32_t refresh;
+        uint32_t retry;
+        uint32_t expire;
+        uint32_t minimum;
+    } soa_record;
+    struct {
         uint8_t txt_data_len;
         char *txt_data;
     } txt_record;
-    struct { //
-        uint8_t addr[4];
-    } a_record;
-    struct { //
-        uint8_t addr[16];
-    } aaaa_record;
 };
 
 /* Resource Record Section */
 struct ResourceRecord {
-    char *name;
+    char *name; // plaintext domain (with dots)
     uint16_t type;
     uint16_t class;
     uint32_t ttl;
