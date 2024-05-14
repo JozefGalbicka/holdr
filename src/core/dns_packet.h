@@ -80,7 +80,7 @@ union ResourceData {
     // SOA
     // HINFO
     // SRV
-    
+
     struct {
         uint8_t addr[4];
     } a_record;
