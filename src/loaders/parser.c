@@ -136,9 +136,42 @@ int parse_txt_rr(union ResourceData * rd, char * txt_data) {
     return 0;
 }
 
+int parse_mx_rr(union ResourceData * rd, char * preference, char * host) {
+    rd->mx_record.exchange = calloc(1, strlen(host));
+    strcpy(rd->mx_record.exchange, host);
+    uint16_t preference_cast = (uint16_t)strtoul(preference, NULL, 10);
+    rd->mx_record.preference = preference_cast;
+    return 0;
+}
+
+int parse_cname_rr(union ResourceData * rd, char * cname) {
+    rd->cname_record.cname = calloc(1, strlen(cname));
+    strcpy(rd->cname_record.cname, cname);
+    return 0;
+}
+
+int parse_ns_rr(union ResourceData * rd, char * ns) {
+    rd->ns_record.nsdname = calloc(1, strlen(ns));
+    strcpy(rd->ns_record.nsdname, ns);
+    return 0;
+}
+
+int parse_soa_rr(union ResourceData * rd, char ** data) {
+    rd->soa_record.mname = calloc(1, strlen(data[0]));
+    strcpy(rd->soa_record.mname, data[0]);
+    rd->soa_record.rname= calloc(1, strlen(data[1]));
+    strcpy(rd->soa_record.rname, data[1]);
+
+    rd->soa_record.serial = strtoul(data[2], NULL, 10);
+    rd->soa_record.refresh = strtoul(data[3], NULL, 10);
+    rd->soa_record.retry = strtoul(data[4], NULL, 10);
+    rd->soa_record.expire = strtoul(data[5], NULL, 10);
+    rd->soa_record.minimum = strtoul(data[6], NULL, 10);
+    return 0;
+}
 
 int rr_parse(char * rr_raw, struct ResourceRecord * rr) {
-    char * delimeter = " \t";
+    char * delimeter = " \t()";
     int split_count;
     char ** rr_split = split_str(rr_raw, delimeter, &split_count);
 
@@ -192,9 +225,37 @@ int rr_parse(char * rr_raw, struct ResourceRecord * rr) {
             return -1;
         }
         rr->rd_length = sizeof(rr->rd_data.txt_record);
+    } else if (strcmp(rr_split[rr_index], "MX") == 0) {
+        rr->type = RRType_MX;
+        //parse MX
+        if (parse_mx_rr(&rr->rd_data, rr_split[++rr_index], rr_split[++rr_index]) != 0) {
+            return -1;
+        }
+        rr->rd_length = sizeof(rr->rd_data.mx_record);
+    } else if (strcmp(rr_split[rr_index], "CNAME") == 0) {
+        rr->type = RRType_CNAME;
+        //parse CNAME
+        if (parse_cname_rr(&rr->rd_data, rr_split[++rr_index]) != 0) {
+            return -1;
+        }
+        rr->rd_length = sizeof(rr->rd_data.cname_record);
+    } else if (strcmp(rr_split[rr_index], "NS") == 0) {
+        rr->type = RRType_NS;
+        //parse NS
+        if (parse_ns_rr(&rr->rd_data, rr_split[++rr_index]) != 0) {
+            return -1;
+        }
+        rr->rd_length = sizeof(rr->rd_data.ns_record);
     } else if (strcmp(rr_split[rr_index], "SOA") == 0) {
         //parse SOA
         rr->type = RRType_SOA;
+        //parse NS
+        rr_index++;
+        if (parse_soa_rr(&rr->rd_data, rr_split + rr_index) != 0) {
+            return -1;
+        }
+        rr->rd_length = sizeof(rr->rd_data.soa_record);
+
     } else {
         printf("This RR type is not supported: %s.\n", rr_split[rr_index]);
         return -1;
@@ -290,7 +351,11 @@ struct ResourceRecord * zone_file_parse(char * filename) {
         }
 
         // add origin
-        if (rr->name[strlen(rr->name) - 1] != '.') {
+        if (strcmp(rr->name, "@") == 0) { // replace @ by origin
+            rr->name = calloc(strlen(origin), sizeof(char));
+            strcpy(rr->name, origin);
+        }
+        else if (rr->name[strlen(rr->name) - 1] != '.') { // append origin
             size_t new_size = strlen(rr->name) + strlen(origin) + 1;
             char * new_name = calloc(new_size, sizeof(char));
             strcpy(new_name, rr->name);
