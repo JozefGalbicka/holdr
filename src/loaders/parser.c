@@ -249,7 +249,6 @@ int rr_parse(char * rr_raw, struct ResourceRecord * rr) {
     } else if (strcmp(rr_split[rr_index], "SOA") == 0) {
         //parse SOA
         rr->type = RRType_SOA;
-        //parse NS
         rr_index++;
         if (parse_soa_rr(&rr->rd_data, rr_split + rr_index) != 0) {
             return -1;
