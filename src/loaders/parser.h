@@ -12,6 +12,10 @@ int mx_check(char **values, int values_count);
 int parse_a_rr(union ResourceData * rd, char *ip_addr);
 int parse_aaaa_rr(union ResourceData * rd, char *ipv6_addr);
 int parse_txt_rr(union ResourceData * rd, char * txt_data);
+int parse_mx_rr(union ResourceData *rd, char *preference, char *host);
+int parse_cname_rr(union ResourceData * rd, char * cname);
+int parse_ns_rr(union ResourceData *rd, char *ns);
+int parse_soa_rr(union ResourceData * rd, char ** data);
 int rr_parse(char *rr_raw, struct ResourceRecord *rr);
 
 int control_entry_parse(char * rr_raw, char * value_out, const char * entry_name);

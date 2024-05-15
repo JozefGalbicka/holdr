@@ -157,16 +157,165 @@ int test_parse_txt_rr() {
 
     if (strcmp(rr->rd_data.txt_record.txt_data, txt_data) != 0) {
         printf("Parse TXT RR test failed, text not matching, aborting\n");
+        exit(1);
     }
 
     if (rr->rd_data.txt_record.txt_data_len != strlen(txt_data)) {
         printf("Parse TXT RR test failed, text length not matching, aborting\n");
+        exit(1);
     }
 
     printf("Parse TXT RR test: OK\n");
     free(rr);
     return 0;
 }
+
+int test_parse_mx_rr() {
+    printf("#########################\n");
+    printf("### test_parse_mx_rr()\n");
+    printf("#########################\n");
+
+    struct ResourceRecord * rr = calloc(1, sizeof(struct ResourceRecord));
+    char * host = "mail.example.com";
+    char * preference = "10";
+
+    if (parse_mx_rr(&rr->rd_data, preference, host) != 0) {
+        printf("Parse MX RR test failed, aborting\n");
+        exit(1);
+    }
+
+    printf("Parse MX RR exchange result: %s\n", rr->rd_data.mx_record.exchange);
+    printf("Parse MX RR preference result: %lu\n", rr->rd_data.mx_record.preference);
+
+    if (strcmp(rr->rd_data.mx_record.exchange, host) != 0) {
+        printf("Parse MX RR test failed, host not matching, aborting\n");
+        exit(1);
+    }
+
+    if (rr->rd_data.mx_record.preference != 10) {
+        printf("Parse MX RR test failed, preference not matching, aborting\n");
+        exit(1);
+    }
+
+    printf("Parse MX RR test: OK\n");
+    free(rr);
+    return 0;
+}
+
+int test_parse_cname_rr() {
+    printf("#########################\n");
+    printf("### test_parse_cname_rr()\n");
+    printf("#########################\n");
+
+    struct ResourceRecord * rr = calloc(1, sizeof(struct ResourceRecord));
+    char * cname = "example.com";
+
+    if (parse_cname_rr(&rr->rd_data, cname) != 0) {
+        printf("Parse CNAME RR test failed, aborting\n");
+        exit(1);
+    }
+
+    printf("Parse CNAME result: %s\n", rr->rd_data.cname_record.cname);
+
+    if (strcmp(rr->rd_data.cname_record.cname, cname) != 0) {
+        printf("Parse CNAME RR test failed, cname not matching, aborting\n");
+        exit(1);
+    }
+
+    printf("Parse CNAME RR test: OK\n");
+    free(rr);
+    return 0;
+}
+
+int test_parse_ns_rr() {
+    printf("#########################\n");
+    printf("### test_parse_ns_rr()\n");
+    printf("#########################\n");
+
+    struct ResourceRecord * rr = calloc(1, sizeof(struct ResourceRecord));
+    char * ns = "example.com";
+
+    if (parse_ns_rr(&rr->rd_data, ns) != 0) {
+        printf("Parse NS RR test failed, aborting\n");
+        exit(1);
+    }
+
+    printf("Parse NS result: %s\n", rr->rd_data.ns_record.nsdname);
+
+    if (strcmp(rr->rd_data.ns_record.nsdname, ns) != 0) {
+        printf("Parse NS RR test failed, ns not matching, aborting\n");
+        exit(1);
+    }
+
+    printf("Parse NS RR test: OK\n");
+    free(rr);
+    return 0;
+}
+
+int test_parse_soa_rr() {
+    printf("#########################\n");
+    printf("### test_parse_soa_rr()\n");
+    printf("#########################\n");
+
+    struct ResourceRecord * rr = calloc(1, sizeof(struct ResourceRecord));
+
+    char * mname = "ns.example.com";
+    char * rname = "admin.example.com";
+    char * soa_arr[7] = {mname, rname, "1", "2", "3", "4", "5"};
+
+    if (parse_soa_rr(&rr->rd_data, soa_arr) != 0) {
+        printf("Parse SOA RR test failed, aborting\n");
+        exit(1);
+    }
+
+    printf("Parse SOA mname result: %s\n", rr->rd_data.soa_record.mname);
+    printf("Parse SOA rname result: %s\n", rr->rd_data.soa_record.rname);
+    printf("Parse SOA serial result: %lu\n", rr->rd_data.soa_record.serial);
+    printf("Parse SOA refresh result: %lu\n", rr->rd_data.soa_record.refresh);
+    printf("Parse SOA retry result: %lu\n", rr->rd_data.soa_record.retry);
+    printf("Parse SOA expire result: %lu\n", rr->rd_data.soa_record.expire);
+    printf("Parse SOA minimum result: %lu\n", rr->rd_data.soa_record.minimum);
+
+    if (strcmp(rr->rd_data.soa_record.mname, mname) != 0) {
+        printf("Parse SOA RR test failed, mname not matching, aborting\n");
+        exit(1);
+    }
+
+    if (strcmp(rr->rd_data.soa_record.rname, rname) != 0) {
+        printf("Parse SOA RR test failed, rname not matching, aborting\n");
+        exit(1);
+    }
+
+    if (rr->rd_data.soa_record.serial != 1) {
+        printf("Parse SOA RR test failed, serial not matching, aborting\n");
+        exit(1);
+    }
+
+    if (rr->rd_data.soa_record.refresh != 2) {
+        printf("Parse SOA RR test failed, refresh not matching, aborting\n");
+        exit(1);
+    }
+
+    if (rr->rd_data.soa_record.retry!= 3) {
+        printf("Parse SOA RR test failed, retry not matching, aborting\n");
+        exit(1);
+    }
+
+    if (rr->rd_data.soa_record.expire!= 4) {
+        printf("Parse SOA RR test failed, expire not matching, aborting\n");
+        exit(1);
+    }
+
+    if (rr->rd_data.soa_record.minimum != 5) {
+        printf("Parse SOA RR test failed, minimum not matching, aborting\n");
+        exit(1);
+    }
+
+    printf("Parse SOA RR test: OK\n");
+    free(rr);
+    return 0;
+}
+
 
 int test_rr_parse() {
     printf("#########################\n");
@@ -285,6 +434,10 @@ int main(){
     test_parse_a_rr();
     test_parse_aaaa_rr();
     test_parse_txt_rr();
+    test_parse_mx_rr();
+    test_parse_cname_rr();
+    test_parse_ns_rr();
+    test_parse_soa_rr();
     test_rr_parse();
     test_control_entry_parse();
     test_zone_file_parse();
