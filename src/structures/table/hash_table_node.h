@@ -1,4 +1,3 @@
-#include <string.h>
 #include <malloc.h>
 #include "murmur_hash.h"
 

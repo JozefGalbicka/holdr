@@ -1,4 +1,3 @@
-#include <stdint-gcc.h>
 #include <malloc.h>
 #include "mersenne_twister.h"
 #include "hash_table_node.h"
