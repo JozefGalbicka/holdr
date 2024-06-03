@@ -8,6 +8,11 @@ add_library (holdr_lib
     structures/tree/red_black_tree_node.h
     structures/tree/red_black_tree_node.c
 
+    structures/tree/trie.h
+    structures/tree/trie.c
+    structures/tree/trie_node.h
+    structures/tree/trie_node.c
+
     structures/table/murmur_hash.h
     structures/table/murmur_hash.c
     structures/table/mersenne_twister.h
