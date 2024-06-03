@@ -2,6 +2,15 @@
 add_library (holdr_lib
     structures/list/array_list.h
     structures/list/array_list.c
+    structures/table/murmur_hash.h
+    structures/table/murmur_hash.c
+    structures/table/mersenne_twister.h
+    structures/table/mersenne_twister.c
+    structures/table/hash_table.h
+    structures/table/hash_table.c
+    structures/table/hash_table_node.h
+    structures/table/hash_table_node.c
+
     utils/strings.h
     utils/strings.c
     utils/prints.h
