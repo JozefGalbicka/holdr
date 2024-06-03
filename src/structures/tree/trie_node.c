@@ -31,6 +31,7 @@ void print_trie_node(trie_node* this)
 
     printf("%c ",this->value);
 
+    printf("- Childs:\n");
     if(this->is_resize)
     {
         for(int i = 0; i < RE_SIZE; i++)
@@ -47,6 +48,7 @@ void print_trie_node(trie_node* this)
                 print_trie_node(this->children[i]);
         }
     }
+    printf("<End of childs>\n");
 }
 
 void destruct_trie_node(trie_node* this)
