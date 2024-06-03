@@ -2,6 +2,12 @@
 add_library (holdr_lib
     structures/list/array_list.h
     structures/list/array_list.c
+
+    structures/tree/red_black_tree.h
+    structures/tree/red_black_tree.c
+    structures/tree/red_black_tree_node.h
+    structures/tree/red_black_tree_node.c
+
     structures/table/murmur_hash.h
     structures/table/murmur_hash.c
     structures/table/mersenne_twister.h
