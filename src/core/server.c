@@ -1,4 +1,6 @@
 
+#include "server.h"
+
 #include <arpa/inet.h>
 #include <poll.h>
 #include <stdlib.h>
