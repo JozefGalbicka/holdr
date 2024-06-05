@@ -1,3 +1,7 @@
+
+#ifndef PRINTS_H
+#define PRINTS_H
+
 #include <stddef.h>
 #include <stdio.h>
 
@@ -10,3 +14,5 @@ int cmp_string(const void *itemA, const void *itemB);
 void print_bytes(void *data, size_t size);
 void print_bits(unsigned char data);
 unsigned char get_first_byte(void *data);
+
+#endif

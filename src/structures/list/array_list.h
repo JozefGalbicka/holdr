@@ -1,4 +1,7 @@
 
+#ifndef ARRAY_LIST_H
+#define ARRAY_LIST_H
+
 #include <stddef.h>
 #include <stdio.h>
 
@@ -42,3 +45,5 @@ void arraylist_iterator_init(ArrayListIterator *self, ArrayList *list);
 void arraylist_iterator_destroy(ArrayListIterator *self);
 _Bool arraylist_iterator_has_next(ArrayListIterator *self);
 void *arraylist_iterator_move_next(ArrayListIterator *self);
+
+#endif

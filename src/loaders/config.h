@@ -1,4 +1,7 @@
 
+#ifndef CONFIG_H
+#define CONFIG_H
+
 #include "structures/list/array_list.h"
 
 struct HoldrZone {
@@ -19,3 +22,5 @@ struct HoldrConfig {
 struct HoldrConfig *holdrconfig_load(const char *filename);
 void holdrconfig_print(struct HoldrConfig *conf);
 void holdrconfig_destroy(struct HoldrConfig *conf);
+
+#endif

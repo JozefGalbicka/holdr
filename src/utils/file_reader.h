@@ -1,3 +1,7 @@
+
+#ifndef FILE_READER_H
+#define FILE_READER_H
+
 /*
  * Functions for work with files
  */
@@ -7,3 +11,5 @@
 
 size_t read_file_size(FILE * f);
 char *read_plaintext_file(const char *filename, size_t *out_size);
+
+#endif
