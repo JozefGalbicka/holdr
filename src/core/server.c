@@ -33,7 +33,7 @@ void *get_in_addr(struct sockaddr *sa)
     return &(((struct sockaddr_in6 *)sa)->sin6_addr);
 }
 
-int run_server(const char *address, int port)
+int run_server(struct HoldrConfig *conf)
 {
     struct sockaddr_in addr; // address we are listening on
     socklen_t addr_len = sizeof(struct sockaddr_in);
@@ -45,8 +45,8 @@ int run_server(const char *address, int port)
 
     // Set address and port
     addr.sin_family = AF_INET;
-    inet_pton(AF_INET, address, &(addr.sin_addr));
-    addr.sin_port = htons(port);
+    inet_pton(AF_INET, conf->address, &(addr.sin_addr));
+    addr.sin_port = htons(conf->port);
 
     // Create socket
     sock = socket(AF_INET, SOCK_DGRAM, 0);
@@ -65,7 +65,7 @@ int run_server(const char *address, int port)
         return 1;
     }
 
-    printf("Listening on port %u.\n", port);
+    printf("Listening on port %u.\n", conf->port);
 
     // Buffer for input/output packet
     uint8_t buffer[BUFFER_SIZE];

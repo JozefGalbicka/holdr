@@ -1,6 +1,5 @@
 
 #include "core/server.h"
-#include "loaders/config.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -22,7 +21,8 @@ int main(int argc, char *argv[])
 
     holdrconfig_print(conf);
 
-    run_server(conf->address, conf->port);
+    run_server(conf);
+
     // unslave the memory
     holdrconfig_destroy(conf);
     free(conf);
