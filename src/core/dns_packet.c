@@ -18,6 +18,42 @@ static const uint16_t TC_MASK = 0x0200;     // 0000 0010 0000 0000
 static const uint16_t RD_MASK = 0x0100;     // 0000 0001 0000 0000
 static const uint16_t RA_MASK = 0x0080;     // 0000 0000 1000 0000
 static const uint16_t RCODE_MASK = 0x000F;  // 0000 0000 0000 1111
+                                            //
+void resource_record_destroy(struct ResourceRecord *rr)
+{
+    free(rr->name);
+    // int i;
+    // while (rr) {
+    union ResourceData *rd = &rr->rd_data;
+    switch (rr->type) {
+    case RRType_A:
+        break;
+    case RRType_NS:
+        free(rd->ns_record.nsdname);
+        break;
+    case RRType_CNAME:
+        free(rd->cname_record.cname);
+        break;
+    case RRType_SOA:
+        free(rd->soa_record.mname);
+        free(rd->soa_record.rname);
+        break;
+    // case RRType_PTR:
+    //     break;
+    case RRType_MX:
+        free(rd->mx_record.exchange);
+        break;
+    case RRType_TXT:
+        free(rd->txt_record.txt_data);
+        break;
+    case RRType_AAAA:
+        break;
+    // case RRType_SRV:
+    //     break;
+    default:
+        printf("Unknown Resource Record { %d }. Cannot free the memory.", rr->type);
+    }
+}
 
 void resource_record_print(struct ResourceRecord *rr)
 {

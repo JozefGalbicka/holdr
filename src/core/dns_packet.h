@@ -154,6 +154,7 @@ struct Message {
 };
 
 void resource_record_print(struct ResourceRecord *rr);
+void resource_record_destroy(struct ResourceRecord *rd);
 void message_print(struct Message *msg);
 uint16_t get16bits(const uint8_t **buffer);
 

@@ -77,6 +77,7 @@ int test_parse_a_rr() {
     printf("#########################\n");
 
     struct ResourceRecord * rr = calloc(1, sizeof(struct ResourceRecord));
+    rr->type = RRType_A;
     char * ip_addr = "192.168.1.1";
 
     if (parse_a_rr(&rr->rd_data, ip_addr) != 0) {
@@ -99,6 +100,7 @@ int test_parse_a_rr() {
     }
 
     printf("Parse A RR test: OK\n");
+    resource_record_destroy(rr);
     free(rr);
     return 0;
 }
@@ -109,6 +111,7 @@ int test_parse_aaaa_rr() {
     printf("#########################\n");
 
     struct ResourceRecord * rr = calloc(1, sizeof(struct ResourceRecord));
+    rr->type = RRType_AAAA;
     char * ipv6_addr = "2001:db8:123:456::";
 
     if (parse_aaaa_rr(&rr->rd_data, ipv6_addr) != 0) {
@@ -135,6 +138,7 @@ int test_parse_aaaa_rr() {
            rr->rd_data.aaaa_record.addr[15]);
 
     printf("Parse AAAA RR test: OK\n");
+    resource_record_destroy(rr);
     free(rr);
     return 0;
 }
@@ -145,6 +149,7 @@ int test_parse_txt_rr() {
     printf("#########################\n");
 
     struct ResourceRecord * rr = calloc(1, sizeof(struct ResourceRecord));
+    rr->type = RRType_TXT;
     char * txt_data = "Example TXT data";
 
     if (parse_txt_rr(&rr->rd_data, txt_data) != 0) {
@@ -166,6 +171,7 @@ int test_parse_txt_rr() {
     }
 
     printf("Parse TXT RR test: OK\n");
+    resource_record_destroy(rr);
     free(rr);
     return 0;
 }
@@ -176,6 +182,7 @@ int test_parse_mx_rr() {
     printf("#########################\n");
 
     struct ResourceRecord * rr = calloc(1, sizeof(struct ResourceRecord));
+    rr->type = RRType_MX;
     char * host = "mail.example.com";
     char * preference = "10";
 
@@ -198,6 +205,7 @@ int test_parse_mx_rr() {
     }
 
     printf("Parse MX RR test: OK\n");
+    resource_record_destroy(rr);
     free(rr);
     return 0;
 }
@@ -208,6 +216,7 @@ int test_parse_cname_rr() {
     printf("#########################\n");
 
     struct ResourceRecord * rr = calloc(1, sizeof(struct ResourceRecord));
+    rr->type = RRType_CNAME;
     char * cname = "example.com";
 
     if (parse_cname_rr(&rr->rd_data, cname) != 0) {
@@ -223,6 +232,7 @@ int test_parse_cname_rr() {
     }
 
     printf("Parse CNAME RR test: OK\n");
+    resource_record_destroy(rr);
     free(rr);
     return 0;
 }
@@ -233,6 +243,7 @@ int test_parse_ns_rr() {
     printf("#########################\n");
 
     struct ResourceRecord * rr = calloc(1, sizeof(struct ResourceRecord));
+    rr->type = RRType_NS;
     char * ns = "example.com";
 
     if (parse_ns_rr(&rr->rd_data, ns) != 0) {
@@ -248,6 +259,7 @@ int test_parse_ns_rr() {
     }
 
     printf("Parse NS RR test: OK\n");
+    resource_record_destroy(rr);
     free(rr);
     return 0;
 }
@@ -258,6 +270,7 @@ int test_parse_soa_rr() {
     printf("#########################\n");
 
     struct ResourceRecord * rr = calloc(1, sizeof(struct ResourceRecord));
+    rr->type = RRType_SOA;
 
     char * mname = "ns.example.com";
     char * rname = "admin.example.com";
@@ -312,6 +325,7 @@ int test_parse_soa_rr() {
     }
 
     printf("Parse SOA RR test: OK\n");
+    resource_record_destroy(rr);
     free(rr);
     return 0;
 }
@@ -359,6 +373,7 @@ int test_rr_parse() {
     }
 
     printf("Parse RR test: OK\n");
+    resource_record_destroy(rr);
     free(rr);
     return 0;
 }
@@ -410,6 +425,7 @@ int test_zone_file_parse() {
 
     printf("Zone file parse test result:\n");
     struct ResourceRecord * current_rr = rr;
+    struct ResourceRecord *tmp_rr = NULL;
     int index = 1;
     while (current_rr != NULL) {
         printf("%d. resource record:\n", index);
@@ -419,7 +435,10 @@ int test_zone_file_parse() {
         printf("TTL: %u\n", current_rr->ttl);
         printf("RD length: %u\n", current_rr->rd_length);
 
-        current_rr = current_rr->next;
+        tmp_rr = current_rr->next;
+        resource_record_destroy(current_rr);
+        free(current_rr);
+        current_rr = tmp_rr;
         index++;
     }
 
