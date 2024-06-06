@@ -272,23 +272,28 @@ int control_entry_parse(char * rr_raw, char * value_out, const char * entry_name
     char * delimeter = " \t";
     int split_count;
     char ** rr_split = split_str(rr_raw, delimeter, &split_count);
+    int exit_value = 0;
 
     // skip if not desired control entry
     if (strcmp(rr_split[0], entry_name) != 0) {
-        return -1;
+        exit_value = -1;
+        //return -1;
     }
     // skip if without value
     if (split_count < 2) {
-        return -1;
+        exit_value = -1;
+        //return -1;
     }
 
-    strcpy(value_out, rr_split[1]);
+    if (exit_value == 0) {
+        strcpy(value_out, rr_split[1]);
+    }
 
     for (int i = 0; i < split_count; i++) {
         free(rr_split[i]);
     }
     free(rr_split);
-    return 0;
+    return exit_value;
 }
 
 struct ResourceRecord * zone_file_parse(char * filename) {
