@@ -137,30 +137,30 @@ int parse_txt_rr(union ResourceData * rd, char * txt_data) {
 }
 
 int parse_mx_rr(union ResourceData * rd, char * preference, char * host) {
-    rd->mx_record.exchange = calloc(1, strlen(host));
-    strcpy(rd->mx_record.exchange, host);
+    rd->mx_record.exchange = calloc(1, strlen(host) + 3);
+    encode_domain_name((uint8_t **)&rd->mx_record.exchange, host, false);
     uint16_t preference_cast = (uint16_t)strtoul(preference, NULL, 10);
     rd->mx_record.preference = preference_cast;
     return 0;
 }
 
 int parse_cname_rr(union ResourceData * rd, char * cname) {
-    rd->cname_record.cname = calloc(1, strlen(cname));
-    strcpy(rd->cname_record.cname, cname);
+    rd->cname_record.cname = calloc(1, strlen(cname) + 3);
+    encode_domain_name((uint8_t **)&rd->cname_record.cname, cname, false);
     return 0;
 }
 
 int parse_ns_rr(union ResourceData * rd, char * ns) {
-    rd->ns_record.nsdname = calloc(1, strlen(ns));
-    strcpy(rd->ns_record.nsdname, ns);
+    rd->ns_record.nsdname = calloc(1, strlen(ns) + 3);
+    encode_domain_name((uint8_t **)&rd->ns_record.nsdname, ns, false);
     return 0;
 }
 
 int parse_soa_rr(union ResourceData * rd, char ** data) {
-    rd->soa_record.mname = calloc(1, strlen(data[0]));
-    strcpy(rd->soa_record.mname, data[0]);
-    rd->soa_record.rname= calloc(1, strlen(data[1]));
-    strcpy(rd->soa_record.rname, data[1]);
+    rd->soa_record.mname = calloc(1, strlen(data[0]) + 3);
+    encode_domain_name((uint8_t **)&rd->soa_record.mname, data[0], false);
+    rd->soa_record.rname= calloc(1, strlen(data[1]) + 3);
+    encode_domain_name((uint8_t **)&rd->soa_record.rname, data[1], false);
 
     rd->soa_record.serial = strtoul(data[2], NULL, 10);
     rd->soa_record.refresh = strtoul(data[3], NULL, 10);
