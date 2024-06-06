@@ -156,14 +156,16 @@ static void message_decode_header(struct Message *msg, const uint8_t **buffer)
     msg->ar_count = get16bits(buffer);
 }
 
-char *decode_domain_name(const uint8_t **buf, size_t len)
+char *decode_domain_name(const uint8_t **buf, size_t len, bool move_buffer)
 {
     char domain[256];
     for (int i = 1; i < MIN(256, len); i += 1) {
         uint8_t c = (*buf)[i];
         if (c == 0) {
             domain[i - 1] = 0;
-            *buf += i + 1;
+            if (move_buffer) {
+                *buf += i + 1;
+            }
             return strdup(domain);
         } else if ((c >= 'a' && c <= 'z') || c == '-') {
             domain[i - 1] = c;
@@ -174,7 +176,6 @@ char *decode_domain_name(const uint8_t **buf, size_t len)
 
     return NULL;
 }
-
 
 // sub.example.com  => 3sub7example3com0
 // sub.example.com. => 3sub7example3com0
@@ -229,7 +230,7 @@ bool message_decode(struct Message *msg, const uint8_t *buffer, size_t size)
     for (i = 0; i < msg->qd_count; i += 1) {
         struct Question *q = malloc(sizeof(struct Question));
 
-        q->qName = decode_domain_name(&buffer, size);
+        q->qName = decode_domain_name(&buffer, size, true);
         q->qType = get16bits(&buffer);
         q->qClass = get16bits(&buffer);
 

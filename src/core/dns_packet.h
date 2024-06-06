@@ -159,7 +159,7 @@ void message_print(struct Message *msg);
 uint16_t get16bits(const uint8_t **buffer);
 
 static void message_decode_header(struct Message *msg, const uint8_t **buffer);
-char *decode_domain_name(const uint8_t **buf, size_t len);
+char *decode_domain_name(const uint8_t **buf, size_t len, bool move_buffer);
 void encode_domain_name(uint8_t **buffer, const char *domain, bool move_buffer);
 bool message_decode(struct Message *msg, const uint8_t *buffer, size_t size);
 
