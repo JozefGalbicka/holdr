@@ -53,13 +53,14 @@ char *get_basename(const char *path)
         return strdup(basename + 1);
 }
 
-char ** split_str(const char * str, char * delimeter, int * split_count_out) {
-    size_t str_len = strlen(str) + 1;  // include \0 terminator
+char **split_str(const char *str, char *delimeter, int *split_count_out)
+{
+    size_t str_len = strlen(str) + 1; // include \0 terminator
 
     char str_copy[str_len];
     strncpy(str_copy, str, str_len);
 
-    char * tok = strtok(str_copy, delimeter);
+    char *tok = strtok(str_copy, delimeter);
     int split_count = 0;
 
     while (tok != NULL) {
@@ -69,7 +70,7 @@ char ** split_str(const char * str, char * delimeter, int * split_count_out) {
 
     strncpy(str_copy, str, str_len);
     tok = strtok(str_copy, delimeter);
-    char ** buffer = calloc(split_count, sizeof(char *));
+    char **buffer = calloc(split_count, sizeof(char *));
 
     for (int i = 0; i < split_count; i++) {
         buffer[i] = calloc(strlen(tok) + 1, sizeof(char));
