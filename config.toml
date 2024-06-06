@@ -4,9 +4,9 @@ port = 5353
 address = "0.0.0.0"
 
 [[zones]]
-domain = "bruh.test"
-file = "bruh-test.db"
-
-[[zones]]
 domain = "example.com"
-file = "example-com.db"
+file = "examples/example-com.db"
+
+#[[zones]]
+#domain = "bruh.test"
+#file = "bruh-test.db"
