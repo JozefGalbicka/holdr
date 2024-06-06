@@ -58,6 +58,7 @@ void resource_record_destroy(struct ResourceRecord *rr)
 void resource_record_print(struct ResourceRecord *rr)
 {
     int i;
+    char *decoded_str = NULL;
     while (rr) {
         printf("  ResourceRecord { name '%s', type %u, class %u, ttl %u, rd_length %u, ", rr->name, rr->type, rr->class,
                rr->ttl, rr->rd_length);
@@ -71,6 +72,57 @@ void resource_record_print(struct ResourceRecord *rr)
                 printf("%s%u", (i ? "." : ""), rd->a_record.addr[i]);
 
             printf(" }");
+            break;
+        case RRType_NS:
+            printf(" Record { ");
+
+            decoded_str = decode_domain_name((const uint8_t **)&rd->ns_record.nsdname, strlen(rd->ns_record.nsdname) + 1, false);
+            printf("nsdname: %s", decoded_str);
+            free(decoded_str);
+
+            printf(" }");
+            break;
+        case RRType_CNAME:
+            printf(" Record { ");
+
+            decoded_str = decode_domain_name((const uint8_t **)&rd->cname_record.cname, strlen(rd->cname_record.cname) + 1, false);
+            printf("cname: %s", decoded_str);
+            free(decoded_str);
+
+            printf(" }");
+            break;
+        case RRType_SOA:
+            printf("SOA Record { ");
+
+            decoded_str = decode_domain_name((const uint8_t **)&rd->soa_record.mname, strlen(rd->soa_record.mname) + 1, false);
+            printf("mname: %s ", decoded_str);
+            free(decoded_str);
+
+            decoded_str = decode_domain_name((const uint8_t **)&rd->soa_record.rname, strlen(rd->soa_record.rname) + 1, false);
+            printf("rname: %s ", decoded_str);
+            free(decoded_str);
+            printf("serial: %u ", rd->soa_record.serial);
+            printf("refresh: %u ", rd->soa_record.refresh);
+            printf("retry: %u ", rd->soa_record.refresh);
+            printf("expire: %u ", rd->soa_record.expire);
+            printf("minimum: %u", rd->soa_record.minimum);
+
+            printf(" }");
+            break;
+            // case RRType_PTR:
+            //     break;
+        case RRType_MX:
+            printf(" Record { ");
+
+            printf("preference: %hu ", rd->mx_record.preference);
+            decoded_str = decode_domain_name((const uint8_t **)&rd->mx_record.exchange, strlen(rd->mx_record.exchange) + 1, false);
+            printf("exchange: %s", decoded_str);
+            free(decoded_str);
+
+            printf(" }");
+            break;
+        case RRType_TXT:
+            printf("Text Resource Record { txt_data '%s' }", rd->txt_record.txt_data);
             break;
         case RRType_AAAA:
             printf("AAAA Resource Record { address ");
