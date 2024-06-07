@@ -5,37 +5,48 @@ void init_hash_table(hash_table* this, size_t size)
 {
     this->seed = extract_mt();
     this->table_size = size;
-    this->table = calloc(this->table_size,sizeof(hash_table_node*));
+    this->table = calloc(this->table_size,sizeof(double_linked_list*));
 }
 
-void insert_hash_table(hash_table* this, char* value)
+void insert_hash_table(hash_table* this, void* data_pointer, char* value)
 {
     uint32_t hash = murmur3_32((const uint8_t *)value,strlen(value),this->seed);
-    hash_table_node *tmp_node = malloc(sizeof(hash_table_node));
-    init_hash_table_node(tmp_node, value);
 
-    if (this->table[hash%this->table_size] == NULL)
+    int index = hash%this->table_size;
+
+    if (this->table[index] == NULL)
     {
-        this->table[hash % this->table_size] = tmp_node;
+        this->table[index] = malloc(sizeof(double_linked_list));
     }
-    else
+
+    if(double_linked_list_search_by_value(this->table[index],value) != NULL)
     {
-        hash_table_node *current = this->table[hash%this->table_size];
-        while(current->next != NULL)
-            current = current->next;
-        current->next = tmp_node;
+        printf("\nDuplicity!!\n");
+        return;
     }
+
+    double_linked_list_add(this->table[index],data_pointer,value);
+
 }
 
-hash_table_node* search_hash_table(hash_table* this,char* value)
+double_linked_list_node* search_hash_table_record(hash_table* this,char* value)
 {
-    hash_table_node *tmp = this->table[(murmur3_32((const uint8_t *)value,strlen(value),this->seed))%this->table_size];
-    while(value != tmp->value)
+    uint32_t hash = murmur3_32((const uint8_t *)value,strlen(value),this->seed);
+    return double_linked_list_search_by_value(this->table[hash % this->table_size],value);
+}
+
+double_linked_list_node* delete_hash_table_record(hash_table* this, char* value)
+{
+    uint32_t hash = murmur3_32((const uint8_t *)value,strlen(value),this->seed);
+    double_linked_list_node* del= double_linked_list_remove_by_value(this->table[hash % this->table_size],value);
+
+    if(this->table[hash % this->table_size]->size == 0)
     {
-        tmp = tmp->next;
+        free(this->table[hash % this->table_size]);
+        this->table[hash % this->table_size] =NULL;
     }
 
-    return tmp;
+    return del;
 }
 
 void destruct_hash_table(hash_table* this)
@@ -44,17 +55,32 @@ void destruct_hash_table(hash_table* this)
     {
         for (int i = 0; i < this->table_size; i++)
         {
-            hash_table_node *tmp = this->table[i];
-                while (tmp != NULL)
-                {
-                    this->table[i] = tmp->next;
-                    destruct_hash_table_node(tmp);
-                    tmp = this->table[i];
-                }
-            this->table[i] = NULL;
+            if(this->table[i] != NULL)
+            {
+                double_linked_list_destructor(this->table[i]);
+                free(this->table[i]);
+                this->table[i] = NULL;
+            }
         }
-
         free(this->table);
         this->table = NULL;
     }
+}
+
+void print_hash_table(hash_table* this)
+{
+    if(this->table == NULL)
+        return;
+
+    int record = 1;
+    for (int i = 0; i < this->table_size; i++)
+    {
+        if(this->table[i] != NULL)
+        {
+            printf("Record %d:\n", record);
+            double_linked_list_print(this->table[i]);
+            record++;
+        }
+    }
+
 }
