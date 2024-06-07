@@ -6,6 +6,7 @@ void init_trie_node(trie_node* this, char value)  //'\0' means root node
     this->is_leaf = false;
     this->is_resize = false;
     this->children = calloc(DEFAULT_SIZE,sizeof(trie_node*));
+    this->table = NULL;
 }
 
 static void resize_children_trie_node(trie_node* this)
@@ -61,6 +62,9 @@ void destruct_trie_node(trie_node* this)
     {
         if (this->children[i] != NULL)
         {
+            if(this->children[i]->is_leaf)
+                destruct_hash_table(this->children[i]->table);
+
             destruct_trie_node(this->children[i]);
         }
     }

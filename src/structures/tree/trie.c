@@ -1,20 +1,25 @@
 #include "trie.h"
 
+#define PRIME_SIZE 257
+
 void init_trie(trie* this)
 {
     this->root = calloc(1,sizeof(trie_node));
     init_trie_node(this->root,'\0');
 }
 
-void insert_trie(trie* this, const char* word)
+hash_table* insert_trie(trie* this, const char* word)
 {
+    if(search_trie(this,word) != NULL)
+        return NULL;
+
     trie_node* tmp = this->root;
     int index = 0;
 
     for(int i = 0; word[i] != '\0'; i++)
     {
         index = (int) word[i] - 'A';
-        if (index < 0)
+        if (index < 0 || index >= RE_SIZE)
             index = RE_SIZE - 1 + index;
 
         if (tmp->children[index] == NULL)
@@ -26,9 +31,12 @@ void insert_trie(trie* this, const char* word)
         tmp = tmp->children[index];
     }
     tmp->is_leaf = true;
+    tmp->table = malloc(sizeof(hash_table));
+    init_hash_table(tmp->table,PRIME_SIZE);
+    return tmp->table;
 }
 
-void delete_trie(trie* this, const char* word)
+hash_table* delete_trie(trie* this, const char* word)
 {
     trie_node* tmp = this->root;
     trie_node* nodes[strlen(word)+1];
@@ -39,15 +47,15 @@ void delete_trie(trie* this, const char* word)
     for(int i = 0; word[i] != '\0'; i++)
     {
         index = (int) word[i] - 'A';
-        if (index < 0)
+        if (index < 0 || index >= RE_SIZE)
         {
             if (!tmp->is_resize)
-                return;
+                return NULL;
             index = RE_SIZE - 1 + index;
         }
 
         if(tmp->children[index] == NULL || tmp->children[index]->value != word[i])
-            return;
+            return NULL;
 
         ind[i] = index;
         nodes[i] = tmp;
@@ -55,9 +63,10 @@ void delete_trie(trie* this, const char* word)
     }
 
     if(!tmp->is_leaf)
-        return;
+        return NULL;
 
     tmp->is_leaf = false;
+    hash_table* del = tmp->table;
 
     bool has_child = has_child_trie_node(tmp);
 
@@ -78,30 +87,32 @@ void delete_trie(trie* this, const char* word)
         destruct_trie_node(nodes[i]);
         nodes[i-1]->children[index] = NULL;
     }
+
+    return del;
 }
 
-bool search_trie(trie* this,const char* word)
+hash_table* search_trie(trie* this,const char* word)
 {
     trie_node* tmp = this->root;
     int index = 0;
     for(int i = 0; word[i] != '\0'; i++)
     {
         index = (int) word[i] - 'A';
-        if (index < 0)
+        if (index < 0 || index >= RE_SIZE)
         {
             if (!tmp->is_resize)
-                return false;
+                return NULL;
 
             index = RE_SIZE - 1 + index;
         }
         if(tmp->children[index] == NULL || tmp->children[index]->value != word[i])
-            return false;
+            return NULL;
         tmp = tmp->children[index];
     }
     if(!tmp->is_leaf)
-        return false;
+        return NULL;
 
-    return true;
+    return tmp->table;
 }
 
 void print_trie(trie* this)
