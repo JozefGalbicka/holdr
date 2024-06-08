@@ -3,6 +3,11 @@ add_library (holdr_lib
     structures/list/array_list.h
     structures/list/array_list.c
 
+    structures/list/double_linked_list.h
+    structures/list/double_linked_list.c
+    structures/list/double_linked_list_node.h
+    structures/list/double_linked_list_node.c
+
     structures/tree/red_black_tree.h
     structures/tree/red_black_tree.c
     structures/tree/red_black_tree_node.h
@@ -19,8 +24,6 @@ add_library (holdr_lib
     structures/table/mersenne_twister.c
     structures/table/hash_table.h
     structures/table/hash_table.c
-    structures/table/hash_table_node.h
-    structures/table/hash_table_node.c
 
     utils/strings.h
     utils/strings.c
