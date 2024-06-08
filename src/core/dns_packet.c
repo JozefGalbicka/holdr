@@ -132,9 +132,8 @@ void resource_record_print(struct ResourceRecord *rr)
 
             printf(" }");
             break;
-        case RRType_TXT:
-            printf("Text Resource Record { txt_data '%s' }", rd->txt_record.txt_data);
-            break;
+            // case RRType_SRV:
+            //     break;
         default:
             printf("Unknown Resource Record { ??? }");
         }
