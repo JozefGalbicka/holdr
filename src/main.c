@@ -2,9 +2,19 @@
 #include "core/server.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 int main(int argc, char *argv[])
 {
+
+    char cwd[256];
+    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+        printf("Current working dir: %s\n", cwd);
+    } else {
+        perror("getcwd() error");
+        return 1;
+    }
+
     if (argc != 2) {
         printf("Usage: %s <filename>\n", argv[0]);
         return 1;
