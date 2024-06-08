@@ -62,10 +62,12 @@ void destruct_trie_node(trie_node* this)
     int size = this->is_resize ? RE_SIZE : DEFAULT_SIZE;
     for (int i = 0; i < size; ++i)
     {
-        if (this->children[i] != NULL)
-        {
-            if(this->children[i]->is_leaf)
+        if (this->children[i] != NULL) {
+            if (this->children[i]->is_leaf)
+            {
                 destruct_hash_table(this->children[i]->table);
+                free(this->children[i]->table);
+            }
 
             destruct_trie_node(this->children[i]);
         }
