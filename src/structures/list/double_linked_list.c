@@ -12,10 +12,11 @@ void double_linked_list_init(double_linked_list* this)
 
 void double_linked_list_destructor(double_linked_list* this)
 {
-    if(this->size == EMPTY)
+    if(this == NULL || this->size == EMPTY)
         return;
 
     double_linked_list_node* prev_node = this->last->prev;
+    double_linked_list_node* tmp_last = this->last;
 
     while(prev_node != NULL)
     {
@@ -25,6 +26,8 @@ void double_linked_list_destructor(double_linked_list* this)
         prev_node = this->last->prev;
         this->size--;
     }
+    double_linked_list_node_destructor(this->first);
+    free(this->last);
     this->last = NULL;
     this->first = NULL;
     this->size = EMPTY;
@@ -79,7 +82,7 @@ double_linked_list_node* double_linked_list_remove_by_value(double_linked_list* 
 
 double_linked_list_node* double_linked_list_search_by_value(double_linked_list* this, char* name)
 {
-    if(this->size == EMPTY)
+    if(this == EMPTY || this->size == EMPTY)
         return NULL;
 
     double_linked_list_node* tmp = this->first;
