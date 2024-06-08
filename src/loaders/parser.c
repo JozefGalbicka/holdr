@@ -130,14 +130,14 @@ int parse_aaaa_rr(union ResourceData * rd, char * ipv6_addr) {
 }
 
 int parse_txt_rr(union ResourceData * rd, char * txt_data) {
-    rd->txt_record.txt_data = calloc(1, strlen(txt_data));
+    rd->txt_record.txt_data = calloc(1, strlen(txt_data) + 1);
     strcpy(rd->txt_record.txt_data, txt_data);
     rd->txt_record.txt_data_len = strlen(txt_data);
     return 0;
 }
 
 int parse_mx_rr(union ResourceData * rd, char * preference, char * host) {
-    rd->mx_record.exchange = calloc(1, strlen(host) + 2);
+    rd->mx_record.exchange = calloc(1, strlen(host) + 3);
     encode_domain_name((uint8_t **)&rd->mx_record.exchange, host, false);
     uint16_t preference_cast = (uint16_t)strtoul(preference, NULL, 10);
     rd->mx_record.preference = preference_cast;
@@ -145,21 +145,21 @@ int parse_mx_rr(union ResourceData * rd, char * preference, char * host) {
 }
 
 int parse_cname_rr(union ResourceData * rd, char * cname) {
-    rd->cname_record.cname = calloc(1, strlen(cname) + 2);
+    rd->cname_record.cname = calloc(1, strlen(cname) + 3);
     encode_domain_name((uint8_t **)&rd->cname_record.cname, cname, false);
     return 0;
 }
 
 int parse_ns_rr(union ResourceData * rd, char * ns) {
-    rd->ns_record.nsdname = calloc(1, strlen(ns) + 2);
+    rd->ns_record.nsdname = calloc(1, strlen(ns) + 3);
     encode_domain_name((uint8_t **)&rd->ns_record.nsdname, ns, false);
     return 0;
 }
 
 int parse_soa_rr(union ResourceData * rd, char ** data) {
-    rd->soa_record.mname = calloc(1, strlen(data[0]) + 2);
+    rd->soa_record.mname = calloc(1, strlen(data[0]) + 3);
     encode_domain_name((uint8_t **)&rd->soa_record.mname, data[0], false);
-    rd->soa_record.rname= calloc(1, strlen(data[1]) + 2);
+    rd->soa_record.rname= calloc(1, strlen(data[1]) + 3);
     encode_domain_name((uint8_t **)&rd->soa_record.rname, data[1], false);
 
     rd->soa_record.serial = strtoul(data[2], NULL, 10);
@@ -190,7 +190,7 @@ int rr_parse(char * rr_raw, struct ResourceRecord * rr) {
         type_check(rr_split[rr_index]) == 0) {
         rr->name = NULL;
     } else {
-        rr->name = calloc(1, strlen(rr_split[rr_index]) * sizeof(char));
+        rr->name = calloc(strlen(rr_split[rr_index]) + 1, sizeof(char));
         strcpy(rr->name, rr_split[rr_index]);
         rr_index++;
     }
@@ -228,7 +228,9 @@ int rr_parse(char * rr_raw, struct ResourceRecord * rr) {
     } else if (strcmp(rr_split[rr_index], "MX") == 0) {
         rr->type = RRType_MX;
         //parse MX
-        if (parse_mx_rr(&rr->rd_data, rr_split[++rr_index], rr_split[++rr_index]) != 0) {
+        int preference_index = ++rr_index;
+        int exchange_index = ++rr_index;
+        if (parse_mx_rr(&rr->rd_data, rr_split[preference_index], rr_split[exchange_index]) != 0) {
             return -1;
         }
         rr->rd_length = sizeof(rr->rd_data.mx_record);
@@ -346,25 +348,26 @@ struct ResourceRecord * zone_file_parse(char * filename) {
         }
 
         // set previous name if not present
-        if (rr->name == NULL) {
-            rr->name = calloc(1, strlen(last_used_name));
+        if (rr->name == NULL && last_used_name != NULL) {
+            rr->name = calloc(strlen(last_used_name) + 1, sizeof(char));
             strcpy(rr->name, last_used_name);
-        } else { // set for later if present
+        } else if (rr->name != NULL) { // set for later if present
             bzero(last_used_name, 256);
             strcpy(last_used_name, rr->name);
         }
 
         // add origin
-        if (strcmp(rr->name, "@") == 0) { // replace @ by origin
-            rr->name = calloc(strlen(origin), sizeof(char));
+        if (strcmp(rr->name, "@") == 0 && origin != NULL) { // replace @ by origin
+            free(rr->name);
+            rr->name = calloc(strlen(origin) + 1, sizeof(char));
             strcpy(rr->name, origin);
-        }
-        else if (rr->name[strlen(rr->name) - 1] != '.') { // append origin
-            size_t new_size = strlen(rr->name) + strlen(origin) + 1;
+        } else if (rr->name[strlen(rr->name) - 1] != '.') { // append origin
+            size_t new_size = strlen(rr->name) + strlen(origin) + 2;
             char * new_name = calloc(new_size, sizeof(char));
-            strcpy(new_name, rr->name);
-            strcpy(new_name + strlen(rr->name), ".");
-            strcpy(new_name + strlen(rr->name) + 1, origin);
+            memcpy(new_name, rr->name, strlen(rr->name));
+            memcpy(new_name + strlen(rr->name), ".", 1);
+            memcpy(new_name + strlen(rr->name) + 1, origin, strlen(origin));
+            memcpy(new_name + new_size - 1, "\0", 1);
 
             free(rr->name);
             rr->name = new_name;

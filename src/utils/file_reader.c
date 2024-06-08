@@ -19,7 +19,7 @@ char * read_plaintext_file(const char *filename, size_t *out_size) {
     }
 
     int file_size = read_file_size(f);
-    char * buffer = calloc(file_size, sizeof(char));
+    char * buffer = calloc(file_size + 1, sizeof(char));
     if (buffer == NULL) {
         fprintf(stderr, "Could not allocate memory\n");
         fclose(f);
@@ -33,6 +33,7 @@ char * read_plaintext_file(const char *filename, size_t *out_size) {
         fclose(f);
         return NULL;
     }
+    buffer[file_size] = '\0';
 
     fclose(f);
     *out_size = file_size;

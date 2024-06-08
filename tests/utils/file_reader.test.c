@@ -33,10 +33,12 @@ int test_read_plaintext_file() {
     if (strncmp(buffer, "I'd just like to interject for a moment", 39) != 0 ||
         strncmp(buffer + size - 11, "GNU/Linux!", 10) != 0) {
         printf("Head and tail of text not matching, aborting\n");
+        free(buffer);
         exit(1);
     }
     printf("Head and tail test: OK\n");
 
+    free(buffer);
     return 0;
 }
 

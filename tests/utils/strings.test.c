@@ -49,6 +49,9 @@ int test_split_str() {
     }
     printf("Split string begin and end test: OK\n");
 
+    for (int i = 0; i < split_count; i++) {
+        free(split[i]);
+    }
     free(split);
 
     return 0;
