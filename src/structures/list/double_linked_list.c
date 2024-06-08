@@ -86,7 +86,7 @@ double_linked_list_node* double_linked_list_search_by_value(double_linked_list* 
 
     while(tmp != NULL)
     {
-        if(strcmp(tmp->value,name) != EMPTY)
+        if(strcmp(tmp->value,name) == EMPTY)
             return tmp;
 
         tmp = tmp ->next;
