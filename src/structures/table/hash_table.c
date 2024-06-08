@@ -17,6 +17,7 @@ void insert_hash_table(hash_table* this, void* data_pointer, char* value)
     if (this->table[index] == NULL)
     {
         this->table[index] = malloc(sizeof(double_linked_list));
+        double_linked_list_init(this->table[index]);
     }
 
     if(double_linked_list_search_by_value(this->table[index],value) != NULL)
