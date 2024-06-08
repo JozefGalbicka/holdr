@@ -16,7 +16,6 @@ void double_linked_list_destructor(double_linked_list* this)
         return;
 
     double_linked_list_node* prev_node = this->last->prev;
-    double_linked_list_node* tmp_last = this->last;
 
     while(prev_node != NULL)
     {
