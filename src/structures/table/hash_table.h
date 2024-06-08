@@ -4,7 +4,7 @@
 #include <malloc.h>
 #include "mersenne_twister.h"
 #include "murmur_hash.h"
-#include "../list/double_linked_list.h"
+#include "structures/list/double_linked_list.h"
 
 typedef struct hash_table
 {
