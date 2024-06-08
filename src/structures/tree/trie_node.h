@@ -21,7 +21,6 @@ typedef struct trie_node
 }trie_node;
 
 void init_trie_node(trie_node* this, char value);
-static void resize_children_trie_node(trie_node* this);
 void insert_child_trie_node(trie_node* this, trie_node* child, int index);
 void print_trie_node(trie_node* this);
 void destruct_trie_node(trie_node* this);

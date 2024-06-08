@@ -19,10 +19,12 @@ hash_table* insert_trie(trie* this, const char* word)
     for(int i = 0; word[i] != '\0'; i++)
     {
         index = (int) word[i] - 'A';
+
         if (index < 0 || index >= RE_SIZE)
             index = RE_SIZE - 1 + index;
 
-        if (tmp->children[index] == NULL)
+
+        if ((!tmp->is_resize && index >= DEFAULT_SIZE) || tmp->children[index] == NULL)
         {
             trie_node *new = calloc(1, sizeof(trie_node));
             init_trie_node(new, word[i]);

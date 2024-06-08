@@ -11,7 +11,9 @@ void init_trie_node(trie_node* this, char value)  //'\0' means root node
 
 static void resize_children_trie_node(trie_node* this)
 {
-    trie_node** new = realloc(this->children, sizeof(trie_node*) * RE_SIZE);
+    trie_node** new = calloc(RE_SIZE, sizeof(trie_node*));
+    memcpy(new, this->children, DEFAULT_SIZE * sizeof(trie_node*));
+    free(this->children);
     this->children = new;
     this->is_resize = true;
 }
