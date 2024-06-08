@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <malloc.h>
 
-#include "../table/hash_table.h"
+#include "structures/table/hash_table.h"
 
 #define DEFAULT_SIZE 58
 #define RE_SIZE 256
