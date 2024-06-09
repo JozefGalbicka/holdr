@@ -81,3 +81,30 @@ char **split_str(const char *str, char *delimeter, int *split_count_out)
     *split_count_out = split_count;
     return buffer;
 }
+
+void reverse_string(char *str, int start, int end)
+{
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+void reverse_domain(char *domain)
+{
+    int n = strlen(domain);
+
+    // Reverse the entire string
+    reverse_string(domain, 0, n - 1);
+
+    // Reverse each part of the domain
+    int start = 0;
+    for (int i = 0; i <= n; i++) {
+        if (domain[i] == '.' || domain[i] == '\0') {
+            reverse_string(domain, start, i - 1);
+            start = i + 1;
+        }
+    }
