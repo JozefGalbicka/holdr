@@ -36,6 +36,8 @@ add_library (holdr_lib
     loaders/config.c
     loaders/parser.h
     loaders/parser.c
+    core/dns_db.h
+    core/dns_db.c
     core/dns_packet.h
     core/dns_packet.c
     core/server.h

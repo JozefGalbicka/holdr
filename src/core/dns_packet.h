@@ -16,7 +16,8 @@ enum {
     RRType_MX = 15,
     RRType_TXT = 16,
     RRType_AAAA = 28,
-    RRType_SRV = 33
+    RRType_SRV = 33,
+    RRTypeMax = RRType_SRV
 };
 
 /* Resource Record Classes */

@@ -1,5 +1,6 @@
 
 #include "server.h"
+#include "dns_db.h"
 
 #include <arpa/inet.h>
 #include <poll.h>
@@ -44,6 +45,10 @@ int run_server(struct HoldrConfig *conf)
     // Exit strategies
     signal(SIGINT, int_handler); // CTRL-C
     // signal(SIGTERM, int_handler); // systemctl stop,
+
+    // Load the database
+    struct Database *db = malloc(sizeof(struct Database));
+    database_load_zones(db, conf);
 
     // Set address and port
     addr.sin_family = AF_INET;
@@ -105,4 +110,7 @@ int run_server(struct HoldrConfig *conf)
         /* Print query */
         message_print(&msg);
     }
+    database_destroy(db, conf);
+    free(db);
+    return 0;
 }
