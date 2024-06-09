@@ -4,7 +4,7 @@ example.com.      IN  SOA   ns.example.com. username.example.com. ( 2020091025 7
 www.example.com.  IN  AAAA     fe:80::               ; test comment
                   IN  A        192.0.2.1
 ftp.example.com.  IN  A        192.0.2.1
-                  IN  A        192.0.2.1
+                  IN  A        192.0.2.2
 txt.example.com.  IN  TXT      LULZ
                   IN  CNAME cname.test.com.
 @                 IN  MX 10 mail.test.com.
