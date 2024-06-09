@@ -2,7 +2,6 @@
 #define TRIE_H
 
 #include <malloc.h>
-#include <string.h>
 #include "trie_node.h"
 
 #define DEFAULT_SIZE 58
