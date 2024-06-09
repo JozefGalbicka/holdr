@@ -157,3 +157,78 @@ void database_destroy(struct Database *db, struct HoldrConfig *conf)
     free(db->data);
 }
 
+hash_table *database_search_zone(struct Database *db, const char *domain)
+{
+    printf("[TRIE] ");
+    char *reversed_domain = malloc(strlen(domain) + 1);
+    strcpy(reversed_domain, domain);
+    reverse_domain(reversed_domain);
+    hash_table *found = NULL;
+
+    char *end = reversed_domain + (strlen(reversed_domain) - 1);
+    printf("Searching for zone '%s'", reversed_domain);
+    while ((found = search_trie(db->data, reversed_domain)) == NULL) {
+        while (end != reversed_domain && (*end) != '.') {
+            // printf("%c", *end);
+            end--;
+        }
+        // printf("\n");
+        if (end == reversed_domain) {
+            // Nothing found
+            break;
+        }
+        *end = '\0';
+        printf(" -> '%s'", reversed_domain);
+    }
+    if (found) {
+        printf(" (found)\n");
+    } else {
+        printf(" (NOT FOUND)\n");
+    }
+    free(reversed_domain);
+    return found;
+}
+
+struct ResourceRecord *database_search_record(struct Database *db, const char *domain, uint16_t type)
+{
+    printf("\n[SEARCH] for record '%s' of type '%d'\n", domain, type);
+    char *domain_without_trailing_dot = malloc(strlen(domain) + 1);
+    strcpy(domain_without_trailing_dot, domain);
+    strip_trailing_dot(domain_without_trailing_dot);
+    hash_table *found_zone = database_search_zone(db, domain_without_trailing_dot);
+    free(domain_without_trailing_dot);
+    struct ResourceRecord *found = NULL;
+    if (found_zone) {
+        // printf("- Found zone");
+        //  Try to find DomainNameDB in HashTable
+        printf("[HASHTABLE] ");
+        struct DomainNameDB *records = NULL;
+        double_linked_list_node *dlln = search_hash_table_record(found_zone, (char *)domain);
+        if (dlln) {
+            printf("existing DomainNameDB '%s' (found)\n", domain);
+            records = (struct DomainNameDB *)dlln->pointer_data;
+            if (!records) {
+                printf("Unexpected error occurred. Record domain node found but not initialized\n");
+                exit(10);
+            }
+            printf("[DOMAINNAMEDB] ");
+            found = records->data[type];
+            if (!found) {
+                // not found
+                printf("RR of type '%d' (NOT FOUND)\n", type);
+                return NULL;
+            } else {
+                printf("RR of type '%d' (found)\n", type);
+                return found;
+            }
+        } else {
+            printf("DomainNameDB '%s' (NOT FOUND)\n", domain);
+            return NULL;
+        }
+    } else {
+        // not found
+        // printf("Zone not found\n");
+        return NULL;
+    }
+    return NULL;
+}
