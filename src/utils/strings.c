@@ -108,3 +108,11 @@ void reverse_domain(char *domain)
             start = i + 1;
         }
     }
+}
+void strip_trailing_dot(char *domain)
+{
+    char *last = strrchr(domain, '.');
+    if (last) {
+        (*last) = '\0';
+    }
+}
