@@ -19,7 +19,8 @@ static const uint16_t RD_MASK = 0x0100;     // 0000 0001 0000 0000
 static const uint16_t RA_MASK = 0x0080;     // 0000 0000 1000 0000
 static const uint16_t RCODE_MASK = 0x000F;  // 0000 0000 0000 1111
                                             //
-void resource_record_destroy_chain(struct ResourceRecord *rr) {
+void resource_record_destroy_chain(struct ResourceRecord *rr)
+{
     struct ResourceRecord *rrd = rr;
     struct ResourceRecord *tmp = NULL;
     while (rrd != NULL) {
@@ -99,7 +100,8 @@ void resource_record_print(struct ResourceRecord *rr)
         case RRType_NS:
             printf(" Record { ");
 
-            decoded_str = decode_domain_name((const uint8_t **)&rd->ns_record.nsdname, strlen(rd->ns_record.nsdname) + 1, false);
+            decoded_str =
+                decode_domain_name((const uint8_t **)&rd->ns_record.nsdname, strlen(rd->ns_record.nsdname) + 1, false);
             printf("nsdname: %s", decoded_str);
             free(decoded_str);
 
@@ -108,7 +110,8 @@ void resource_record_print(struct ResourceRecord *rr)
         case RRType_CNAME:
             printf(" Record { ");
 
-            decoded_str = decode_domain_name((const uint8_t **)&rd->cname_record.cname, strlen(rd->cname_record.cname) + 1, false);
+            decoded_str = decode_domain_name((const uint8_t **)&rd->cname_record.cname,
+                                             strlen(rd->cname_record.cname) + 1, false);
             printf("cname: %s", decoded_str);
             free(decoded_str);
 
@@ -117,11 +120,13 @@ void resource_record_print(struct ResourceRecord *rr)
         case RRType_SOA:
             printf("SOA Record { ");
 
-            decoded_str = decode_domain_name((const uint8_t **)&rd->soa_record.mname, strlen(rd->soa_record.mname) + 1, false);
+            decoded_str =
+                decode_domain_name((const uint8_t **)&rd->soa_record.mname, strlen(rd->soa_record.mname) + 1, false);
             printf("mname: %s ", decoded_str);
             free(decoded_str);
 
-            decoded_str = decode_domain_name((const uint8_t **)&rd->soa_record.rname, strlen(rd->soa_record.rname) + 1, false);
+            decoded_str =
+                decode_domain_name((const uint8_t **)&rd->soa_record.rname, strlen(rd->soa_record.rname) + 1, false);
             printf("rname: %s ", decoded_str);
             free(decoded_str);
             printf("serial: %u ", rd->soa_record.serial);
@@ -138,7 +143,8 @@ void resource_record_print(struct ResourceRecord *rr)
             printf(" Record { ");
 
             printf("preference: %hu ", rd->mx_record.preference);
-            decoded_str = decode_domain_name((const uint8_t **)&rd->mx_record.exchange, strlen(rd->mx_record.exchange) + 1, false);
+            decoded_str = decode_domain_name((const uint8_t **)&rd->mx_record.exchange,
+                                             strlen(rd->mx_record.exchange) + 1, false);
             printf("exchange: %s", decoded_str);
             free(decoded_str);
 
