@@ -19,6 +19,17 @@ static const uint16_t RD_MASK = 0x0100;     // 0000 0001 0000 0000
 static const uint16_t RA_MASK = 0x0080;     // 0000 0000 1000 0000
 static const uint16_t RCODE_MASK = 0x000F;  // 0000 0000 0000 1111
                                             //
+void resource_record_destroy_chain(struct ResourceRecord *rr) {
+    struct ResourceRecord *rrd = rr;
+    struct ResourceRecord *tmp = NULL;
+    while (rrd != NULL) {
+        tmp = rrd->next;
+        resource_record_destroy(rrd);
+        free(rrd);
+
+        rrd = tmp;
+    }
+}
 void resource_record_destroy(struct ResourceRecord *rr)
 {
     free(rr->name);
@@ -53,6 +64,18 @@ void resource_record_destroy(struct ResourceRecord *rr)
     default:
         printf("Unknown Resource Record { %d }. Cannot free the memory.", rr->type);
     }
+}
+
+struct ResourceRecord *resource_record_get_last(struct ResourceRecord *rr)
+{
+    if (!rr) {
+        return rr;
+    }
+    struct ResourceRecord *tmp = rr;
+    while (tmp->next != NULL) {
+        tmp = tmp->next;
+    }
+    return tmp;
 }
 
 void resource_record_print(struct ResourceRecord *rr)
