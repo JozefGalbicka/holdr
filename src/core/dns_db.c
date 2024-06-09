@@ -1,3 +1,4 @@
+
 #include "dns_db.h"
 #include "core/dns_packet.h"
 #include "loaders/parser.h"
@@ -8,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void database_load_zones(struct Database *db, struct HoldrConfig *conf)
+bool database_load_zones(struct Database *db, struct HoldrConfig *conf)
 {
     // Init Trie
     db->data = malloc(sizeof(trie));
@@ -40,7 +41,7 @@ void database_load_zones(struct Database *db, struct HoldrConfig *conf)
         struct ResourceRecord *rr;
         if ((rr = zone_file_parse(cur_zone->file)) == NULL) {
             printf("Zone file parse test failed, aborting\n");
-            return; // error
+            return false; // error
         }
         printf("Zone file parse result:\n");
         resource_record_print(rr);
@@ -100,7 +101,7 @@ void database_load_zones(struct Database *db, struct HoldrConfig *conf)
     // destruct_trie(db->data);
     // free(db->data);
 
-    return;
+    return true;
 }
 
 void database_destroy(struct Database *db, struct HoldrConfig *conf)

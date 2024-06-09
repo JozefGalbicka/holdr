@@ -17,7 +17,7 @@ struct DomainNameDB {
     struct ResourceRecord *data[RRTypeMax + 1];
 };
 
-void database_load_zones(struct Database *db, struct HoldrConfig *conf);
+bool database_load_zones(struct Database *db, struct HoldrConfig *conf);
 void database_destroy(struct Database *db, struct HoldrConfig *conf);
 
 #endif
