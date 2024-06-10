@@ -243,3 +243,42 @@ struct ResourceRecord *database_search_record(struct Database *db, const char *d
     }
     return NULL;
 }
+
+/*
+ * so about this one - rework it. this is kind of inefficient and redundant. Just rewrite `database_search_record() to return SOA in case of non-found resolution and flag responses through passed argument or smth. but oh well I already wrote this
+ */
+struct ResourceRecord *database_search_soa(struct Database *db, const char *domain)
+{
+    struct ResourceRecord *found_rr = NULL;
+    printf("[SEARCH] for zone of domain '%s' in order to find SOA record\n", domain);
+    printf("[TRIE] ");
+    char *reversed_domain = malloc(strlen(domain) + 2);
+    strcpy(reversed_domain, domain);
+    strip_trailing_dot(reversed_domain);
+    reverse_domain(reversed_domain);
+    hash_table *found = NULL;
+
+    printf("Searching for zone '%s'", reversed_domain);
+    while ((found = search_trie(db->data, reversed_domain)) == NULL) {
+        if (!trim_one_domain_level(reversed_domain)) {
+            break;
+        }
+        printf(" -> '%s'", reversed_domain);
+    }
+    if (found) {
+        printf(" (found)\n");
+    } else {
+        printf(" (NOT FOUND)\n");
+    }
+
+    if (found) {
+        reverse_domain(reversed_domain);
+        reversed_domain[strlen(reversed_domain)+1] = '\0'; // we have to append `\0` first, as removing the existing one would result in breaking the next strlen()
+        reversed_domain[strlen(reversed_domain)] = '.';
+        printf("[SEARCH] for SOA record of domain name '%s'\n", reversed_domain);
+        found_rr = database_search_record(db, reversed_domain, RRType_SOA);
+    }
+
+    free(reversed_domain);
+    return found_rr;
+}

@@ -21,5 +21,6 @@ void database_destroy(struct Database *db, struct HoldrConfig *conf);
 
 hash_table *database_search_zone(struct Database *db, const char *domain);
 struct ResourceRecord *database_search_record(struct Database *db, const char *domain, uint16_t type);
+struct ResourceRecord *database_search_soa(struct Database *db, const char *domain);
 
 #endif
