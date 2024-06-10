@@ -157,6 +157,25 @@ void database_destroy(struct Database *db, struct HoldrConfig *conf)
     free(db->data);
 }
 
+/*
+ * @return boolean whether it was or was not trimmed
+ */
+static bool trim_one_domain_level(char *domain)
+{
+    char *end = domain + (strlen(domain) - 1);
+    while (end != domain && (*end) != '.') {
+        // printf("%c", *end);
+        end--;
+    }
+    // printf("\n");
+    if (end == domain) {
+        // Nothing found
+        return false;
+    }
+    *end = '\0';
+    return true;
+}
+
 hash_table *database_search_zone(struct Database *db, const char *domain)
 {
     printf("[TRIE] ");
@@ -165,19 +184,11 @@ hash_table *database_search_zone(struct Database *db, const char *domain)
     reverse_domain(reversed_domain);
     hash_table *found = NULL;
 
-    char *end = reversed_domain + (strlen(reversed_domain) - 1);
     printf("Searching for zone '%s'", reversed_domain);
     while ((found = search_trie(db->data, reversed_domain)) == NULL) {
-        while (end != reversed_domain && (*end) != '.') {
-            // printf("%c", *end);
-            end--;
-        }
-        // printf("\n");
-        if (end == reversed_domain) {
-            // Nothing found
+        if (!trim_one_domain_level(reversed_domain)) {
             break;
         }
-        *end = '\0';
         printf(" -> '%s'", reversed_domain);
     }
     if (found) {
