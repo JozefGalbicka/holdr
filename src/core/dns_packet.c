@@ -1,6 +1,5 @@
 
 #include "core/dns_packet.h"
-#include "utils/prints.h"
 
 #include <arpa/inet.h>
 #include <stdlib.h>

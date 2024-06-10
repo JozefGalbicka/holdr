@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdint.h> // for uints
 #include <stdio.h>
+#include "core/dns_db.h"
 
 /* Resource Record Types */
 enum {

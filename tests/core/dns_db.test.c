@@ -1,6 +1,7 @@
 
 #include "core/dns_db.h"
 #include "loaders/config.h"
+#include "core/dns_packet.h"
 #include <stdio.h>
 
 static void found_ptr_add(void *ptr, size_t *count)

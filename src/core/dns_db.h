@@ -2,7 +2,6 @@
 #ifndef DNS_DB_H
 #define DNS_DB_H
 
-#include "dns_packet.h"
 #include "loaders/config.h"
 #include "structures/table/hash_table.h"
 #include "structures/tree/red_black_tree.h"
@@ -14,7 +13,7 @@ struct Database {
 };
 
 struct DomainNameDB {
-    struct ResourceRecord *data[RRTypeMax + 1];
+    struct ResourceRecord *data[50]; // TODO change to RRTypeMax
 };
 
 bool database_load_zones(struct Database *db, struct HoldrConfig *conf);
