@@ -224,7 +224,7 @@ int rr_parse(char * rr_raw, struct ResourceRecord * rr) {
         if (parse_txt_rr(&rr->rd_data, rr_split[++rr_index]) != 0) {
             return -1;
         }
-        rr->rd_length = sizeof(rr->rd_data.txt_record);
+        rr->rd_length = sizeof(rr->rd_data.txt_record.txt_data_len) + rr->rd_data.txt_record.txt_data_len;
     } else if (strcmp(rr_split[rr_index], "MX") == 0) {
         rr->type = RRType_MX;
         //parse MX
@@ -233,21 +233,21 @@ int rr_parse(char * rr_raw, struct ResourceRecord * rr) {
         if (parse_mx_rr(&rr->rd_data, rr_split[preference_index], rr_split[exchange_index]) != 0) {
             return -1;
         }
-        rr->rd_length = sizeof(rr->rd_data.mx_record);
+        rr->rd_length = sizeof(rr->rd_data.mx_record.preference) + strlen(rr->rd_data.mx_record.exchange) + 1; // +1 as strlen is not counting last 0
     } else if (strcmp(rr_split[rr_index], "CNAME") == 0) {
         rr->type = RRType_CNAME;
         //parse CNAME
         if (parse_cname_rr(&rr->rd_data, rr_split[++rr_index]) != 0) {
             return -1;
         }
-        rr->rd_length = sizeof(rr->rd_data.cname_record);
+        rr->rd_length = strlen(rr->rd_data.cname_record.cname) + 1; // +1 as strlen is not counting last 0
     } else if (strcmp(rr_split[rr_index], "NS") == 0) {
         rr->type = RRType_NS;
         //parse NS
         if (parse_ns_rr(&rr->rd_data, rr_split[++rr_index]) != 0) {
             return -1;
         }
-        rr->rd_length = sizeof(rr->rd_data.ns_record);
+        rr->rd_length = strlen(rr->rd_data.ns_record.nsdname) + 1; // +1 as strlen is not counting last 0
     } else if (strcmp(rr_split[rr_index], "SOA") == 0) {
         //parse SOA
         rr->type = RRType_SOA;
@@ -255,7 +255,7 @@ int rr_parse(char * rr_raw, struct ResourceRecord * rr) {
         if (parse_soa_rr(&rr->rd_data, rr_split + rr_index) != 0) {
             return -1;
         }
-        rr->rd_length = sizeof(rr->rd_data.soa_record);
+        rr->rd_length = strlen(rr->rd_data.soa_record.mname) + 1 + strlen(rr->rd_data.soa_record.rname) + 1 + 20; // +1 as strlen is not counting last 0
 
     } else {
         printf("This RR type is not supported: %s.\n", rr_split[rr_index]);
