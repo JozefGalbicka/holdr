@@ -272,7 +272,8 @@ char *decode_domain_name(const uint8_t **buf, size_t len, bool move_buffer)
     for (int i = 1; i < MIN(256, len); i += 1) {
         uint8_t c = (*buf)[i];
         if (c == 0) {
-            domain[i - 1] = 0;
+            domain[i - 1] = '.';
+            domain[i] = 0;
             if (move_buffer) {
                 *buf += i + 1;
             }
