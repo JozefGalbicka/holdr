@@ -85,6 +85,7 @@ int run_server(struct HoldrConfig *conf)
 
     // For message processing
     struct Message msg;
+    struct ResourceRecord *rr;
     memset(&msg, 0, sizeof(struct Message));
 
     while (keep_running) {
@@ -109,6 +110,16 @@ int run_server(struct HoldrConfig *conf)
 
         /* Print query */
         message_print(&msg);
+        message_resolve_query(&msg, db);
+
+        uint8_t *p = buffer;
+        if (!message_encode(&msg, &p)) {
+            continue;
+        }
+
+        size_t buflen = p - buffer;
+        sendto(sock, buffer, buflen, 0, (struct sockaddr*) &client_addr, addr_len);
+
     }
     database_destroy(db, conf);
     free(db);

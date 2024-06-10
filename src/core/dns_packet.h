@@ -176,4 +176,6 @@ bool message_decode(struct Message *msg, const uint8_t *buffer, size_t size);
 bool message_encode(struct Message *msg, uint8_t **buffer);
 
 bool resource_record_encode_chain(struct ResourceRecord *rr, uint8_t **buffer);
+void message_resolve_query(struct Message *msg, struct Database *db);
+
 #endif

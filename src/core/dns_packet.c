@@ -470,3 +470,31 @@ bool message_encode(struct Message *msg, uint8_t **buffer)
     return true;
 }
 
+void message_resolve_query(struct Message *msg, struct Database *db)
+{
+    struct ResourceRecord *rr;
+    struct Question *q;
+
+    msg->qr = 1; // message is a response
+    msg->aa = 1; // responding server is authoritative
+    msg->ra = 0; // no recursion available
+    msg->rcode = ResponseCode_NOERROR;
+
+    // just checking - should be 0 already (from the question)
+    msg->an_count = 0;
+    msg->ns_count = 0;
+    msg->ar_count = 0;
+
+    // NOTE: in general, there should be only one question - so we are processing only the first one
+    q = msg->questions;
+
+    rr = database_search_record(db, msg->questions->qName, msg->questions->qType);
+
+    if (!rr) {
+        msg->rcode = ResponseCode_NXDOMAIN;
+        printf("RR not found, responding with NXDOMAIN\n");
+    }
+
+    msg->an_count += resource_record_count_chain(rr);
+    msg->answers = rr;
+}
