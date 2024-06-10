@@ -120,6 +120,7 @@ int run_server(struct HoldrConfig *conf)
         size_t buflen = p - buffer;
         sendto(sock, buffer, buflen, 0, (struct sockaddr*) &client_addr, addr_len);
 
+        message_destroy(&msg);
     }
     database_destroy(db, conf);
     free(db);

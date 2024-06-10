@@ -166,6 +166,7 @@ void put8bits(uint8_t **buffer, uint8_t value);
 void put16bits(uint8_t **buffer, uint16_t value);
 void put32bits(uint8_t **buffer, uint32_t value);
 
+void message_destroy(struct Message *msg);
 static void message_decode_header(struct Message *msg, const uint8_t **buffer);
 void message_encode_header(struct Message *msg, uint8_t **buffer);
 

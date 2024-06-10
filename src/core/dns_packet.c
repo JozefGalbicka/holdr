@@ -246,6 +246,22 @@ void put32bits(uint8_t **buffer, uint32_t value)
     *buffer += 4;
 }
 
+void message_destroy(struct Message *msg)
+{
+    struct Question *q = msg->questions;
+    struct Question *tmp = NULL;
+
+    while(q) {
+        tmp = q->next;
+
+        free(q->qName);
+        free(q);
+
+        q = tmp;
+    }
+
+}
+
 static void message_decode_header(struct Message *msg, const uint8_t **buffer)
 {
     msg->id = get16bits(buffer);
