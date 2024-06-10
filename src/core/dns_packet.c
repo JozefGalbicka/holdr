@@ -359,3 +359,114 @@ bool message_decode(struct Message *msg, const uint8_t *buffer, size_t size)
 
     return true;
 }
+
+bool resource_record_encode_chain(struct ResourceRecord *rr, uint8_t **buffer)
+{
+    int i;
+
+    while (rr) {
+        // Answer questions by attaching resource sections.
+        encode_domain_name(buffer, rr->name, true);
+        put16bits(buffer, rr->type);
+        put16bits(buffer, rr->class);
+        put32bits(buffer, rr->ttl);
+        put16bits(buffer, rr->rd_length);
+
+        switch (rr->type) {
+        case RRType_A:
+            for (i = 0; i < 4; i += 1)
+                put8bits(buffer, rr->rd_data.a_record.addr[i]);
+            break;
+        case RRType_NS:
+            for (i = 0; i < strlen(rr->rd_data.ns_record.nsdname) + 1; i += 1)
+                put8bits(buffer, rr->rd_data.ns_record.nsdname[i]);
+            break;
+        case RRType_CNAME:
+            for (i = 0; i < strlen(rr->rd_data.cname_record.cname) + 1; i += 1)
+                put8bits(buffer, rr->rd_data.cname_record.cname[i]);
+            break;
+        case RRType_SOA:
+            for (i = 0; i < strlen(rr->rd_data.soa_record.mname) + 1; i += 1)
+                put8bits(buffer, rr->rd_data.soa_record.mname[i]);
+            for (i = 0; i < strlen(rr->rd_data.soa_record.rname) + 1; i += 1)
+                put8bits(buffer, rr->rd_data.soa_record.rname[i]);
+            put32bits(buffer, rr->rd_data.soa_record.serial);
+            put32bits(buffer, rr->rd_data.soa_record.refresh);
+            put32bits(buffer, rr->rd_data.soa_record.retry);
+            put32bits(buffer, rr->rd_data.soa_record.expire);
+            put32bits(buffer, rr->rd_data.soa_record.minimum);
+            break;
+        // case RRType_PTR:
+        //     break;
+        case RRType_MX:
+            put16bits(buffer, rr->rd_data.mx_record.preference);
+            for (i = 0; i < strlen(rr->rd_data.mx_record.exchange) + 1; i++) {
+                put8bits(buffer, rr->rd_data.mx_record.exchange[i]);
+            }
+            break;
+        case RRType_TXT:
+            put8bits(buffer, rr->rd_data.txt_record.txt_data_len);
+            for (i = 0; i < rr->rd_data.txt_record.txt_data_len; i++)
+                put8bits(buffer, rr->rd_data.txt_record.txt_data[i]);
+            break;
+        case RRType_AAAA:
+            for (i = 0; i < 16; i += 1)
+                put8bits(buffer, rr->rd_data.aaaa_record.addr[i]);
+            break;
+        // case RRType_SRV:
+        //     break;
+        default:
+            fprintf(stderr, "Unknown type %u. => Ignore resource record.\n", rr->type);
+            return false;
+        }
+
+        rr = rr->next;
+    }
+
+    return true;
+}
+
+void message_encode_header(struct Message *msg, uint8_t **buffer)
+{
+    put16bits(buffer, msg->id);
+
+    int fields = 0;
+    fields |= (msg->qr << 15) & QR_MASK;
+    fields |= (msg->rcode << 0) & RCODE_MASK;
+    // TODO: insert the rest of the fields
+    put16bits(buffer, fields);
+
+    put16bits(buffer, msg->qd_count);
+    put16bits(buffer, msg->an_count);
+    put16bits(buffer, msg->ns_count);
+    put16bits(buffer, msg->ar_count);
+}
+
+bool message_encode(struct Message *msg, uint8_t **buffer)
+{
+    message_encode_header(msg, buffer);
+
+    struct Question *q = msg->questions;
+    while (q) {
+        encode_domain_name(buffer, q->qName, true);
+        put16bits(buffer, q->qType);
+        put16bits(buffer, q->qClass);
+
+        q = q->next;
+    }
+
+    if (!resource_record_encode_chain(msg->answers, buffer)) {
+        return false;
+    }
+
+    if (!resource_record_encode_chain(msg->authorities, buffer)) {
+        return false;
+    }
+
+    if (!resource_record_encode_chain(msg->additionals, buffer)) {
+        return false;
+    }
+
+    return true;
+}
+

@@ -167,8 +167,13 @@ void put16bits(uint8_t **buffer, uint16_t value);
 void put32bits(uint8_t **buffer, uint32_t value);
 
 static void message_decode_header(struct Message *msg, const uint8_t **buffer);
+void message_encode_header(struct Message *msg, uint8_t **buffer);
+
 char *decode_domain_name(const uint8_t **buf, size_t len, bool move_buffer);
 void encode_domain_name(uint8_t **buffer, const char *domain, bool move_buffer);
-bool message_decode(struct Message *msg, const uint8_t *buffer, size_t size);
 
+bool message_decode(struct Message *msg, const uint8_t *buffer, size_t size);
+bool message_encode(struct Message *msg, uint8_t **buffer);
+
+bool resource_record_encode_chain(struct ResourceRecord *rr, uint8_t **buffer);
 #endif
