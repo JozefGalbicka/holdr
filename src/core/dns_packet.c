@@ -209,7 +209,12 @@ void message_print(struct Message *msg)
         q = q->next;
     }
 
-    resource_record_print(msg->answers);
+    for (int i = 0; i < ANSWERS_LIST_SIZE; i++) {
+        if (msg->answers_list[i] != NULL) {
+            resource_record_print(msg->answers_list[i]);
+            break;
+        }
+    }
     resource_record_print(msg->authorities);
     resource_record_print(msg->additionals);
 
@@ -251,7 +256,7 @@ void message_destroy(struct Message *msg)
     struct Question *q = msg->questions;
     struct Question *tmp = NULL;
 
-    while(q) {
+    while (q) {
         tmp = q->next;
 
         free(q->qName);
@@ -259,7 +264,6 @@ void message_destroy(struct Message *msg)
 
         q = tmp;
     }
-
 }
 
 static void message_decode_header(struct Message *msg, const uint8_t **buffer)
@@ -471,8 +475,14 @@ bool message_encode(struct Message *msg, uint8_t **buffer)
         q = q->next;
     }
 
-    if (!resource_record_encode_chain(msg->answers, buffer)) {
-        return false;
+    for (int i = 0; i < ANSWERS_LIST_SIZE; i++) {
+        if (msg->answers_list[i] != NULL) {
+            if (!resource_record_encode_chain(msg->answers_list[i], buffer)) {
+                return false;
+            } else {
+                break;
+            }
+        }
     }
 
     if (!resource_record_encode_chain(msg->authorities, buffer)) {
@@ -509,8 +519,13 @@ void message_resolve_query(struct Message *msg, struct Database *db)
     if (!rr) {
         msg->rcode = ResponseCode_NXDOMAIN;
         printf("RR not found, responding with NXDOMAIN\n");
+    } else {
+        for (int i = 0; i < ANSWERS_LIST_SIZE; i++) {
+            if (msg->answers_list[i] == NULL) {
+                msg->answers_list[i] = rr;
+            }
+        }
+        msg->an_count += resource_record_count_chain(rr);
     }
 
-    msg->an_count += resource_record_count_chain(rr);
-    msg->answers = rr;
 }

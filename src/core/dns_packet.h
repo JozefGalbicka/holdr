@@ -2,6 +2,8 @@
 #ifndef DNS_PACKET_H
 #define DNS_PACKET_H
 
+#define ANSWERS_LIST_SIZE 5
+
 #include <stdbool.h>
 #include <stdint.h> // for uints
 #include <stdio.h>
@@ -150,7 +152,7 @@ struct Message {
      * Every resource record can be in any of the following places.
      * But every place has a different semantic.
      */
-    struct ResourceRecord *answers;
+    struct ResourceRecord *answers_list[ANSWERS_LIST_SIZE];
     struct ResourceRecord *authorities;
     struct ResourceRecord *additionals;
 };
