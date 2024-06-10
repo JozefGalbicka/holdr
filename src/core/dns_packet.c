@@ -65,6 +65,16 @@ void resource_record_destroy(struct ResourceRecord *rr)
         printf("Unknown Resource Record { %d }. Cannot free the memory.", rr->type);
     }
 }
+size_t resource_record_count_chain(struct ResourceRecord *rr)
+{
+    struct ResourceRecord *tmp = rr;
+    size_t count = 0;
+    while (tmp != NULL) {
+        tmp = tmp->next;
+        count++;
+    }
+    return count;
+}
 
 struct ResourceRecord *resource_record_get_last(struct ResourceRecord *rr)
 {

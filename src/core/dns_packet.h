@@ -158,6 +158,7 @@ struct Message {
 void resource_record_print(struct ResourceRecord *rr);
 void resource_record_destroy(struct ResourceRecord *rd);
 void resource_record_destroy_chain(struct ResourceRecord *rr);
+size_t resource_record_count_chain(struct ResourceRecord *rr);
 struct ResourceRecord *resource_record_get_last(struct ResourceRecord *rr);
 void message_print(struct Message *msg);
 uint16_t get16bits(const uint8_t **buffer);
