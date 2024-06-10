@@ -215,6 +215,26 @@ uint16_t get16bits(const uint8_t **buffer)
     return ntohs(value);
 }
 
+void put8bits(uint8_t **buffer, uint8_t value)
+{
+    memcpy(*buffer, &value, 1);
+    *buffer += 1;
+}
+
+void put16bits(uint8_t **buffer, uint16_t value)
+{
+    value = htons(value);
+    memcpy(*buffer, &value, 2);
+    *buffer += 2;
+}
+
+void put32bits(uint8_t **buffer, uint32_t value)
+{
+    value = htonl(value);
+    memcpy(*buffer, &value, 4);
+    *buffer += 4;
+}
+
 static void message_decode_header(struct Message *msg, const uint8_t **buffer)
 {
     msg->id = get16bits(buffer);

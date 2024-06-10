@@ -161,6 +161,9 @@ void resource_record_destroy_chain(struct ResourceRecord *rr);
 struct ResourceRecord *resource_record_get_last(struct ResourceRecord *rr);
 void message_print(struct Message *msg);
 uint16_t get16bits(const uint8_t **buffer);
+void put8bits(uint8_t **buffer, uint8_t value);
+void put16bits(uint8_t **buffer, uint16_t value);
+void put32bits(uint8_t **buffer, uint32_t value);
 
 static void message_decode_header(struct Message *msg, const uint8_t **buffer);
 char *decode_domain_name(const uint8_t **buf, size_t len, bool move_buffer);
