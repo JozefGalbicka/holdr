@@ -160,7 +160,8 @@ void resource_record_print(struct ResourceRecord *rr)
             printf(" }");
             break;
         case RRType_TXT:
-            printf("Text Resource Record { txt_data '%s' }", rd->txt_record.txt_data);
+            printf("Text Resource Record { txt_data '%s', txt_data_len '%d' }", rd->txt_record.txt_data,
+                   rd->txt_record.txt_data_len);
             break;
         case RRType_AAAA:
             printf("AAAA Resource Record { address ");
