@@ -7,7 +7,13 @@
 - with wide variety of $features = {sanity \over 13 weeks}$
 
 ## Features
-- GitHub repository
+- TOML configuration file
+- Zone files (using RFC-1035 format) with custom parser
+- Support for basic DNS resource record types (A/NS/CNAME/SOA/MX/TXT/AAAA)
+- Hierarchically designed database:
+    - `Trie` - to store zones (keyed by zone name, each zone represented in form of `HashTable`)
+    - `HashTable` that is keyed by each unique domain name in said zone (value stores `DomainNameDB`)
+    - `DomainNameDB` that is keyed by a RR type (A/TXT/..). Value contains final `ResourceRecord` chain (chain in case where multiple records of the same domainname+type exist)
 
 ## Development
 ### Naming conventions
