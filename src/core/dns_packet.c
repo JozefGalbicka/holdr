@@ -544,16 +544,17 @@ void message_resolve_query(struct Message *msg, struct Database *db)
                             break;
                         }
                     } else { // didn't find A record
-                        printf("<didn't find A record for CNAME of `%s`, searching whether to include SOA at least>\n", domain_name);
+                        printf("<didn't find A record for CNAME of `%s`, searching whether zone exists to include SOA at least>\n", domain_name);
                         strip_trailing_dot(domain_name);
                         if (database_search_zone(db, domain_name)) {
                             msg->rcode = ResponseCode_NXDOMAIN;
+                            printf("<zone found, including SOA for '%s'\n", domain_name);
                             rr = database_search_soa(db, domain_name);
                             msg->authorities = rr;
                             msg->ns_count += resource_record_count_chain(rr);
                         } else {
                             msg->rcode = ResponseCode_NXDOMAIN;
-                            //attach_soa = true;
+                            printf("<not including SOA, as server does not own zone for '%s'\n", domain_name);
                         }
                     }
                     free(domain_name);

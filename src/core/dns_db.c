@@ -250,7 +250,7 @@ struct ResourceRecord *database_search_record(struct Database *db, const char *d
 struct ResourceRecord *database_search_soa(struct Database *db, const char *domain)
 {
     struct ResourceRecord *found_rr = NULL;
-    printf("[SEARCH] for zone of domain '%s' in order to find SOA record\n", domain);
+    printf("[SEARCH] for name of the zone for domain name '%s' in order to find SOA record\n", domain);
     printf("[TRIE] ");
     char *reversed_domain = malloc(strlen(domain) + 2);
     strcpy(reversed_domain, domain);
@@ -275,7 +275,6 @@ struct ResourceRecord *database_search_soa(struct Database *db, const char *doma
         reverse_domain(reversed_domain);
         reversed_domain[strlen(reversed_domain)+1] = '\0'; // we have to append `\0` first, as removing the existing one would result in breaking the next strlen()
         reversed_domain[strlen(reversed_domain)] = '.';
-        printf("[SEARCH] for SOA record of domain name '%s'\n", reversed_domain);
         found_rr = database_search_record(db, reversed_domain, RRType_SOA);
     }
 
