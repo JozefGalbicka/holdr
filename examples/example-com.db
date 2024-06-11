@@ -1,11 +1,14 @@
 $ORIGIN example.com.
 $TTL 3600
-example.com.      IN  SOA   ns.example.com. username.example.com. ( 2020091025 7200 3600 1209600 3600 )
-www.example.com.  IN  AAAA     fe:80::               ; test comment
-                  IN  A        192.0.2.1
-ftp.example.com.  IN  A        192.0.2.1
-                  IN  A        192.0.2.2
-txt.example.com.  IN  TXT      LULZ
-                  IN  CNAME cname.test.com.
-@                 IN  MX 10 mail.test.com.
-wtf               IN  NS ns.test.com.
+example.com.        IN  SOA   ns.example.com. username.example.com. ( 2020091025 7200 3600 1209600 3600 )
+www.example.com.    IN  AAAA     fe:80::               ; test comment
+                    IN  A        192.0.2.1
+ftp.example.com.    IN  A        192.0.2.1
+                    IN  A        192.0.2.2
+txt.example.com.    IN  TXT      LULZ
+cname1.example.com. IN  CNAME www.example.com.
+cname2.example.com. IN  CNAME ftp.example.com.
+cname3.example.com. IN  CNAME aaaaaaaaaaa.example.com.
+cname4.example.com. IN  CNAME google.com.
+@                   IN  MX 10 mail.test.com.
+wtf                 IN  NS ns.test.com.
