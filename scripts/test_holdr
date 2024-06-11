@@ -1,0 +1,21 @@
+#!/bin/bash
+ADDRESS="127.0.0.1"
+PORT=5354
+dig @$ADDRESS -p $PORT www.example.com
+dig AAAA @$ADDRESS -p $PORT www.example.com
+dig @$ADDRESS -p $PORT ftp.example.com
+dig txt @$ADDRESS -p $PORT txt.example.com
+dig mx @$ADDRESS -p $PORT example.com
+dig ns @$ADDRESS -p $PORT wtf.example.com
+dig soa @$ADDRESS -p $PORT example.com
+echo -e "\n\nSPECIAL\n\n"
+dig @$ADDRESS -p $PORT cname1.example.com
+dig @$ADDRESS -p $PORT cname2.example.com
+dig @$ADDRESS -p $PORT cname3.example.com
+dig @$ADDRESS -p $PORT cname4.example.com
+
+echo -e "\n\nSHOULD ERROR\n\n"
+dig @$ADDRESS -p $PORT txt.example.com
+dig @$ADDRESS -p $PORT lksadfdafsl.example.com
+dig @$ADDRESS -p $PORT dfslaadfs.google.com
+
