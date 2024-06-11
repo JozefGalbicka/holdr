@@ -1,5 +1,7 @@
 
 #include "core/dns_packet.h"
+#include "core/dns_db.h"
+#include "utils/strings.h"
 
 #include <arpa/inet.h>
 #include <stdlib.h>
@@ -497,7 +499,10 @@ bool message_encode(struct Message *msg, uint8_t **buffer)
 void message_resolve_query(struct Message *msg, struct Database *db)
 {
     struct ResourceRecord *rr;
+    struct ResourceRecord *tmp;
     struct Question *q;
+    bool attach_soa = false;
+    char *domain_name = NULL;
 
     msg->qr = 1; // message is a response
     msg->aa = 1; // responding server is authoritative
@@ -515,22 +520,65 @@ void message_resolve_query(struct Message *msg, struct Database *db)
     rr = database_search_record(db, msg->questions->qName, msg->questions->qType);
 
     if (!rr) {
-        msg->rcode = ResponseCode_NXDOMAIN;
-        rr = database_search_soa(db, q->qName);
-        printf("RR not found, responding with NXDOMAIN");
-        if (rr) {
+        switch (q->qType) {
+        case RRType_A:
+            printf("<didn't find A record, so searching for CNAME>\n");
+            rr = database_search_record(db, msg->questions->qName, RRType_CNAME);
+            if (rr) { // if found CNAME
+                msg->answers_list[0] = rr;
+                msg->an_count += resource_record_count_chain(rr);
+                tmp = rr;
+                int index = 1;
+                printf("<found CNAME(s), so trying to include linked A records as well>\n");
+                while (tmp) { // for each CNAME append A record
+                    domain_name = decode_domain_name((const uint8_t **)&rr->rd_data.cname_record.cname,
+                                                     strlen(rr->rd_data.cname_record.cname) + 1, false);
+                    rr = database_search_record(db, domain_name, RRType_A);
+                    if (rr) {
+                        msg->answers_list[index] = rr;
+                        msg->an_count += resource_record_count_chain(rr);
+                        index++;
+                        // TODO: we should think about more unlimited approach in here, as answers_list is of static
+                        // size
+                        if (index == ANSWERS_LIST_SIZE) {
+                            break;
+                        }
+                    } else {
+                        printf("<didn't find A record for CNAME of `%s`, searching whether to include SOA at least>\n", domain_name);
+                        strip_trailing_dot(domain_name);
+                        if (database_search_zone(db, domain_name)) {
+                            attach_soa = true;
+                        }
+                    }
+                    free(domain_name);
+                    tmp = tmp->next;
+                }
+            } else {
+                attach_soa = true;
+            }
+            break;
+        default:
+            attach_soa = true;
+            break;
+        }
+        if (attach_soa) {
+            msg->rcode = ResponseCode_NXDOMAIN;
+            rr = database_search_soa(db, q->qName);
+            printf("RR not found, responding with NXDOMAIN");
             msg->authorities = rr;
             msg->ar_count += resource_record_count_chain(rr);
             printf(" with SOA");
         }
         printf("\n");
+        return;
     } else {
         for (int i = 0; i < ANSWERS_LIST_SIZE; i++) {
             if (msg->answers_list[i] == NULL) {
                 msg->answers_list[i] = rr;
+                msg->an_count += resource_record_count_chain(rr);
+                break;
             }
         }
-        msg->an_count += resource_record_count_chain(rr);
     }
 
 }
