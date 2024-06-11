@@ -566,7 +566,7 @@ void message_resolve_query(struct Message *msg, struct Database *db)
             rr = database_search_soa(db, q->qName);
             printf("RR not found, responding with NXDOMAIN");
             msg->authorities = rr;
-            msg->ar_count += resource_record_count_chain(rr);
+            msg->ns_count += resource_record_count_chain(rr);
             printf(" with SOA");
         }
         printf("\n");
