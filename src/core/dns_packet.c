@@ -479,8 +479,6 @@ bool message_encode(struct Message *msg, uint8_t **buffer)
         if (msg->answers_list[i] != NULL) {
             if (!resource_record_encode_chain(msg->answers_list[i], buffer)) {
                 return false;
-            } else {
-                break;
             }
         }
     }
