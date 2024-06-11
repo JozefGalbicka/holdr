@@ -111,8 +111,8 @@ void reverse_domain(char *domain)
 }
 void strip_trailing_dot(char *domain)
 {
-    char *last = strrchr(domain, '.');
-    if (last) {
+    char *last = domain + (strlen(domain) - 1);
+    if ((*last) == '.') {
         (*last) = '\0';
     }
 }
