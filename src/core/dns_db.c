@@ -202,7 +202,7 @@ hash_table *database_search_zone(struct Database *db, const char *domain)
 
 struct ResourceRecord *database_search_record(struct Database *db, const char *domain, uint16_t type)
 {
-    printf("\n[SEARCH] for record '%s' of type '%d'\n", domain, type);
+    printf("[SEARCH] for record '%s' of type '%d'\n", domain, type);
     char *domain_without_trailing_dot = malloc(strlen(domain) + 1);
     strcpy(domain_without_trailing_dot, domain);
     strip_trailing_dot(domain_without_trailing_dot);

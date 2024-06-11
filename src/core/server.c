@@ -121,6 +121,7 @@ int run_server(struct HoldrConfig *conf)
         sendto(sock, buffer, buflen, 0, (struct sockaddr*) &client_addr, addr_len);
 
         message_destroy(&msg);
+        printf("\n");
     }
     database_destroy(db, conf);
     free(db);

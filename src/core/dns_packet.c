@@ -519,11 +519,13 @@ void message_resolve_query(struct Message *msg, struct Database *db)
     if (!rr) {
         msg->rcode = ResponseCode_NXDOMAIN;
         rr = database_search_soa(db, q->qName);
+        printf("RR not found, responding with NXDOMAIN");
         if (rr) {
             msg->authorities = rr;
             msg->ar_count += resource_record_count_chain(rr);
+            printf(" with SOA");
         }
-        printf("RR not found, responding with NXDOMAIN with SOA\n");
+        printf("\n");
     } else {
         for (int i = 0; i < ANSWERS_LIST_SIZE; i++) {
             if (msg->answers_list[i] == NULL) {
