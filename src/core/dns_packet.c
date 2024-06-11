@@ -543,26 +543,33 @@ void message_resolve_query(struct Message *msg, struct Database *db)
                         if (index == ANSWERS_LIST_SIZE) {
                             break;
                         }
-                    } else {
+                    } else { // didn't find A record
                         printf("<didn't find A record for CNAME of `%s`, searching whether to include SOA at least>\n", domain_name);
                         strip_trailing_dot(domain_name);
                         if (database_search_zone(db, domain_name)) {
-                            attach_soa = true;
+                            msg->rcode = ResponseCode_NXDOMAIN;
+                            rr = database_search_soa(db, domain_name);
+                            msg->authorities = rr;
+                            msg->ns_count += resource_record_count_chain(rr);
+                        } else {
+                            msg->rcode = ResponseCode_NXDOMAIN;
+                            //attach_soa = true;
                         }
                     }
                     free(domain_name);
                     tmp = tmp->next;
                 }
             } else {
+                msg->rcode = ResponseCode_NXDOMAIN;
                 attach_soa = true;
             }
             break;
-        default:
+        default: // any other RR
+            msg->rcode = ResponseCode_NXDOMAIN;
             attach_soa = true;
             break;
         }
         if (attach_soa) {
-            msg->rcode = ResponseCode_NXDOMAIN;
             rr = database_search_soa(db, q->qName);
             printf("RR not found, responding with NXDOMAIN");
             msg->authorities = rr;
