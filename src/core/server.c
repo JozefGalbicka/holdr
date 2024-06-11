@@ -48,7 +48,9 @@ int run_server(struct HoldrConfig *conf)
 
     // Load the database
     struct Database *db = malloc(sizeof(struct Database));
-    database_load_zones(db, conf);
+    if (!database_load_zones(db, conf)) {
+        return 0; // signal didn't stop the program so for time constraint we use this
+    }
 
     // Set address and port
     addr.sin_family = AF_INET;
